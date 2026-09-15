@@ -1,0 +1,33 @@
+{
+  "name": "thieab-ka",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "framer-motion": "^11.11.17",
+    "lucide-react": "^0.468.0",
+    "next": "^15.5.15",
+    "papaparse": "^5.5.3",
+    "pg": "^8.21.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-qr-code": "^2.0.15",
+    "read-excel-file": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/papaparse": "^5.5.2",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}

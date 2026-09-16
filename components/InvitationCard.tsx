@@ -78,9 +78,13 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [photoShapes, setPhotoShapes] = useState<Record<string, "portrait" | "landscape" | "square">>({});
   const videoRef = useRef<HTMLVideoElement>(null);
-  const date = new Date(`${wedding.date}T${wedding.time || "00:00"}`);
+  const fallbackDate = "2026-12-12";
+  const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(wedding.date || "") ? wedding.date : fallbackDate;
+  const safeTime = /^\d{2}:\d{2}$/.test(wedding.time || "") ? wedding.time : "00:00";
+  const candidateDate = new Date(`${safeDate}T${safeTime}`);
+  const date = Number.isNaN(candidateDate.getTime()) ? new Date(`${fallbackDate}T00:00`) : candidateDate;
   const targetTime = date.getTime();
-  const [dateYear, dateMonth, dateDay] = wedding.date.split("-").map(Number);
+  const [dateYear, dateMonth, dateDay] = safeDate.split("-").map(Number);
   const displayDate = new Date(Date.UTC(dateYear, dateMonth - 1, dateDay));
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const dayText = String(dateDay).padStart(2, "0");
@@ -91,11 +95,14 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const videoEmbedUrl = getVideoEmbedUrl(wedding.videoUrl || "");
   const hasDirectVideo = isDirectVideoUrl(wedding.videoUrl || "");
   const photoUrls = parsePhotoUrls(wedding.photoUrls || "").slice(0, 8);
-  const calendarStart = `${wedding.date.replace(/-/g, "")}T${(wedding.time || "00:00").replace(":", "")}00`;
+  const calendarStart = `${safeDate.replace(/-/g, "")}T${safeTime.replace(":", "")}00`;
   const calendarEndDate = new Date(date.getTime() + 4 * 60 * 60 * 1000);
   const calendarEnd = `${calendarEndDate.getFullYear()}${String(calendarEndDate.getMonth() + 1).padStart(2, "0")}${String(calendarEndDate.getDate()).padStart(2, "0")}T${String(calendarEndDate.getHours()).padStart(2, "0")}${String(calendarEndDate.getMinutes()).padStart(2, "0")}00`;
   const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${wedding.brideName} & ${wedding.groomName} Wedding`)}&dates=${calendarStart}/${calendarEnd}&details=${encodeURIComponent(wedding.message)}&location=${encodeURIComponent(`${wedding.venue}, ${wedding.address}`)}`;
-  const cardStyle = wedding.backgroundUrl ? { "--invite-background-image": `url("${wedding.backgroundUrl}")` } as React.CSSProperties : undefined;
+  const cardStyle = {
+    ...(wedding.backgroundUrl ? { "--invite-background-image": `url("${wedding.backgroundUrl}")` } : {}),
+    "--invite-name-size": `${wedding.nameFontSize || 72}px`
+  } as React.CSSProperties;
   const schedule = parseSchedule(wedding.schedule);
 
   useEffect(() => {
@@ -200,8 +207,8 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const calendarCells = Array.from({ length: calendarOffset + monthDays }, (_, index) => index < calendarOffset ? 0 : index - calendarOffset + 1);
 
   return (
-    <article className={`invitation jasmine-card theme-${wedding.theme} font-${wedding.khmerFont || "serif"} ${compact ? "compact" : ""}`} style={cardStyle}>
-      {wedding.animation && <div className="petals" aria-hidden="true">{[...Array(12)].map((_, i) => <i key={i} style={{ "--i": i } as React.CSSProperties} />)}</div>}
+    <article className={`invitation jasmine-card theme-${wedding.theme} font-${wedding.khmerFont || "serif"} date-${wedding.dateStyle || "classic"} number-${wedding.numberStyle || "classic"} date-text-${wedding.dateTextStyle || "classic"} ${compact ? "compact" : ""}`} style={cardStyle}>
+      {wedding.animation && <div className="petals" aria-hidden="true">{[...Array(20)].map((_, i) => <i key={i} style={{ "--i": i, "--delay": `${-i * 0.8}s` } as React.CSSProperties} />)}</div>}
       <section className="invite-hero reveal-on-scroll">
         <div className="invite-shade" />
         <div className="baroque-pillar baroque-pillar-left" aria-hidden="true"><i /><i /><i /></div>
@@ -233,16 +240,6 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
         <p className="invite-message">{wedding.message}</p>
       </section>
 
-      <section className="announcement-section reveal-on-scroll">
-        <p>{wedding.announcementText || "We joyfully announce the wedding of our children"}</p>
-        <div className="announcement-names">
-          <div><strong>{wedding.groomName}</strong><small>Groom</small></div>
-          <b>&</b>
-          <div><strong>{wedding.brideName}</strong><small>Bride</small></div>
-        </div>
-        <div className="flower-divider" aria-hidden="true">❦</div>
-      </section>
-
       <section className="dress-code reveal-on-scroll">
         <span aria-hidden="true">❦</span>
         <strong>Dress Code</strong>
@@ -250,12 +247,19 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
       </section>
 
       <section className="schedule-section reveal-on-scroll">
-        <h2>Wedding Day Schedule</h2>
-        <div className="timeline">
-          {schedule.map(([time, label], index) => (
-            <div className="timeline-item" style={{ "--delay": `${index * 90}ms` } as React.CSSProperties} key={`${time}-${label}`}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <div><strong>{time}</strong><small>{label}</small></div>
+        <h2>{wedding.scheduleTitle || "Wedding Day Schedule"}</h2>
+        <div className="schedule-days">
+          {schedule.map((day, dayIndex) => (
+            <div className="schedule-day" key={`${day.title}-${dayIndex}`}>
+              <div className="schedule-day-heading"><span>DAY {String(dayIndex + 1).padStart(2, "0")}</span><h3>{day.title}</h3></div>
+              <div className="timeline">
+                {day.items.map(([time, label], index) => (
+                  <div className="timeline-item" style={{ "--delay": `${(dayIndex * 5 + index) * 90}ms` } as React.CSSProperties} key={`${dayIndex}-${time}-${label}`}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <div><strong>{time}</strong><small>{label}</small></div>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -318,7 +322,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
             {Object.entries(countdown).map(([key, value]) => (
               <div className="countdown-unit" key={key}>
                 <strong>{String(value).padStart(2, "0")}</strong>
-                <span>{key}</span>
+                <span>{key === "minutes" ? "MIN" : key === "seconds" ? "SEC" : key.toUpperCase()}</span>
               </div>
             ))}
           </div>
@@ -412,16 +416,26 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
 }
 
 function parseSchedule(value: string | undefined) {
-  const fallback = [
-    ["17:30", "Welcome"],
-    ["18:30", "Reception"],
-    ["18:45", "Toasts & Cake"],
-    ["19:00", "Main Course"],
-    ["21:00", "Farewell"]
-  ];
-  const rows = (value || "")
-    .split("\n")
-    .map((line) => line.split("|").map((part) => part.trim()))
-    .filter((parts) => parts[0] && parts[1]);
-  return rows.length ? rows.slice(0, 8) : fallback;
+  type ScheduleDay = { title: string; items: string[][] };
+  const fallback: ScheduleDay[] = [{
+    title: "Wedding Day",
+    items: [["17:30", "Welcome"], ["18:30", "Reception"], ["18:45", "Toasts & Cake"], ["19:00", "Main Course"], ["21:00", "Farewell"]]
+  }];
+  const days: ScheduleDay[] = [];
+  let current: ScheduleDay = { title: "Wedding Day", items: [] };
+
+  for (const rawLine of (value || "").split("\n")) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    const heading = line.match(/^\[(.+?)\]$/);
+    if (heading) {
+      if (current.items.length) days.push(current);
+      current = { title: heading[1].trim() || `Day ${days.length + 1}`, items: [] };
+      continue;
+    }
+    const parts = line.split("|").map((part) => part.trim());
+    if (parts[0] && parts[1]) current.items.push([parts[0], parts.slice(1).join(" | ")]);
+  }
+  if (current.items.length) days.push(current);
+  return days.length ? days.map((day) => ({ ...day, items: day.items.slice(0, 8) })) : fallback;
 }

@@ -11,6 +11,7 @@ interface WeddingContextValue {
   username: string;
   ready: boolean;
   updateWedding: (patch: Partial<Wedding>) => void;
+  saveWedding: () => Promise<void>;
   addGuest: (guest: Omit<Guest, "id" | "luckyId" | "status">) => void;
   importGuests: (guests: Array<Omit<Guest, "id" | "luckyId" | "status">>) => void;
   removeGuest: (id: string) => void;
@@ -51,7 +52,7 @@ export function WeddingProvider({ children }: { children: React.ReactNode }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(wedding)
-      });
+      }).catch(() => undefined);
     }, 450);
     return () => clearTimeout(timer);
   }, [wedding, ready, username]);
@@ -62,6 +63,14 @@ export function WeddingProvider({ children }: { children: React.ReactNode }) {
     username,
     ready,
     updateWedding: (patch) => setWedding((current) => ({ ...current, ...patch })),
+    saveWedding: async () => {
+      const response = await fetch("/api/data", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(wedding)
+      });
+      if (!response.ok) throw new Error("Unable to save wedding details.");
+    },
     addGuest: (guest) => {
       fetch("/api/data/guests", {
         method: "POST", headers: { "Content-Type": "application/json" },

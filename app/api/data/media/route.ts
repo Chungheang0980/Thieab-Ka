@@ -5,7 +5,7 @@ import { addLocalMedia, isLocalClient } from "@/lib/local-store";
 
 const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
-const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 25 * 1024 * 1024;
 
 type MediaKind = "photo" | "video";
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: kind === "photo" ? "Use JPG, PNG, WebP, or GIF photos." : "Use MP4, WebM, or MOV video." }, { status: 400 });
     }
     if (file.size > maxBytes) {
-      return NextResponse.json({ error: kind === "photo" ? "Each photo must be 8 MB or smaller." : "Video must be 25 MB or smaller." }, { status: 400 });
+      return NextResponse.json({ error: kind === "photo" ? "Each photo must be 20 MB or smaller." : "Video must be 25 MB or smaller." }, { status: 400 });
     }
 
     const data = Buffer.from(await file.arrayBuffer());

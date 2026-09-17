@@ -13,7 +13,7 @@ export const defaultWedding: Wedding = {
   scheduleTitle: "Wedding Day Schedule",
   schedule: "17:30 | Welcome\n18:30 | Reception\n18:45 | Toasts & Cake\n19:00 | Main Course\n21:00 | Farewell",
   theme: "heritage",
-  khmerFont: "serif",
+  khmerFont: "siemreap",
   nameFontSize: 72,
   dateStyle: "strip",
   numberStyle: "classic",

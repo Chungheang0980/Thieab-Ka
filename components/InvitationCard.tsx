@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, Copy, Gift, Image, MapPin, Music2, Video } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Copy, Gift, Image, MapPin, Music2, Video } from "lucide-react";
 import QRCode from "react-qr-code";
 import { Guest, RSVPStatus, Wedding } from "@/types";
 import { useEffect, useRef, useState } from "react";
@@ -77,6 +77,8 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const [wishes, setWishes] = useState<{ name: string; message: string }[]>([]);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [photoShapes, setPhotoShapes] = useState<Record<string, "portrait" | "landscape" | "square">>({});
+  const [scheduleIndex, setScheduleIndex] = useState(0);
+  const scheduleTouchStart = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fallbackDate = "2026-12-12";
   const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(wedding.date || "") ? wedding.date : fallbackDate;
@@ -104,6 +106,23 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
     "--invite-name-size": `${wedding.nameFontSize || 72}px`
   } as React.CSSProperties;
   const schedule = parseSchedule(wedding.schedule);
+  const activeScheduleIndex = Math.min(scheduleIndex, Math.max(schedule.length - 1, 0));
+
+  function moveSchedule(direction: number) {
+    setScheduleIndex((current) => Math.max(0, Math.min(schedule.length - 1, current + direction)));
+  }
+
+  function handleScheduleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
+    scheduleTouchStart.current = event.touches[0]?.clientX ?? null;
+  }
+
+  function handleScheduleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
+    if (scheduleTouchStart.current === null) return;
+    const distance = (event.changedTouches[0]?.clientX ?? scheduleTouchStart.current) - scheduleTouchStart.current;
+    scheduleTouchStart.current = null;
+    if (Math.abs(distance) < 45) return;
+    moveSchedule(distance < 0 ? 1 : -1);
+  }
 
   useEffect(() => {
     const video = videoRef.current;
@@ -248,21 +267,28 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
 
       <section className="schedule-section reveal-on-scroll">
         <h2>{wedding.scheduleTitle || "Wedding Day Schedule"}</h2>
-        <div className="schedule-days">
-          {schedule.map((day, dayIndex) => (
-            <div className="schedule-day" key={`${day.title}-${dayIndex}`}>
-              <div className="schedule-day-heading"><span>DAY {String(dayIndex + 1).padStart(2, "0")}</span><h3>{day.title}</h3></div>
-              <div className="timeline">
-                {day.items.map(([time, label], index) => (
-                  <div className="timeline-item" style={{ "--delay": `${(dayIndex * 5 + index) * 90}ms` } as React.CSSProperties} key={`${dayIndex}-${time}-${label}`}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <div><strong>{time}</strong><small>{label}</small></div>
+        <div className="schedule-carousel" onTouchStart={handleScheduleTouchStart} onTouchEnd={handleScheduleTouchEnd}>
+          {schedule.length > 1 && <button className="schedule-nav schedule-nav-prev" type="button" onClick={() => moveSchedule(-1)} disabled={activeScheduleIndex === 0} aria-label="Previous schedule day"><ChevronLeft size={20} /></button>}
+          <div className="schedule-viewport">
+            <div className="schedule-days" style={{ transform: `translateX(-${activeScheduleIndex * 100}%)` }}>
+              {schedule.map((day, dayIndex) => (
+                <div className="schedule-day" key={`${day.title}-${dayIndex}`}>
+                  <div className="schedule-day-heading"><span>DAY {String(dayIndex + 1).padStart(2, "0")}</span><h3>{day.title}</h3></div>
+                  <div className="timeline">
+                    {day.items.map(([time, label], index) => (
+                      <div className="timeline-item" style={{ "--delay": `${index * 70}ms` } as React.CSSProperties} key={`${dayIndex}-${time}-${label}`}>
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <div><strong>{time}</strong><small>{label}</small></div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          {schedule.length > 1 && <button className="schedule-nav schedule-nav-next" type="button" onClick={() => moveSchedule(1)} disabled={activeScheduleIndex === schedule.length - 1} aria-label="Next schedule day"><ChevronRight size={20} /></button>}
         </div>
+        {schedule.length > 1 && <div className="schedule-carousel-footer"><span>Swipe to explore the days</span><div className="schedule-dots">{schedule.map((day, index) => <button type="button" key={day.title + index} className={index === activeScheduleIndex ? "active" : ""} onClick={() => setScheduleIndex(index)} aria-label={`Show ${day.title}`} />)}</div></div>}
       </section>
 
       <section className="invite-body">

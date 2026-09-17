@@ -3644,7 +3644,7 @@ input:focus, textarea:focus {
 .jasmine-card .family-card:hover,
 .jasmine-card .wish-item:hover { transform: translateY(-3px); border-color: var(--modern-gold) !important; box-shadow: 0 12px 25px #c49a5218 !important; }
 
-.jasmine-card .countdown-section {
+.jasmine-card.jasmine-card .countdown-section {
   background: var(--modern-ink) !important;
   color: white !important;
 }
@@ -3731,7 +3731,7 @@ input:focus, textarea:focus {
 .jasmine-card .venue-section iframe {
   visibility: visible !important;
 }
-.jasmine-card .reveal-on-scroll {
+.live-preview .jasmine-card .reveal-on-scroll {
   opacity: 1 !important;
   transform: none !important;
 }
@@ -4313,6 +4313,353 @@ input:focus, textarea:focus {
   animation: none;
 }
 
+/* Reference-inspired Modern theme: jade paper, antique gold, and Khmer invitation framing. */
+.jasmine-card.theme-modern {
+  --ref-jade: #365f58;
+  --ref-jade-deep: #21463f;
+  --ref-jade-soft: #78958b;
+  --ref-gold: #d3a45a;
+  --ref-gold-soft: #e4c786;
+  --ref-paper: #e9eee7;
+  --ref-ink: #21443d;
+  background: var(--ref-jade-deep) !important;
+}
+.jasmine-card.theme-modern .invite-hero {
+  background-image:
+    linear-gradient(180deg, #21463dcc, #365f58e6),
+    var(--invite-background-image, none) !important;
+  background-position: center;
+  background-size: cover;
+}
+.jasmine-card.theme-modern .invite-hero::before,
+.jasmine-card.theme-modern .schedule-section::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border: 1px solid #e4c786aa;
+  pointer-events: none;
+}
+.jasmine-card.theme-modern .invite-hero::before { z-index: 1; }
+.jasmine-card.theme-modern .invite-hero-content { position: relative; z-index: 2; }
+.jasmine-card.theme-modern .invite-label,
+.jasmine-card.theme-modern .ornament,
+.jasmine-card.theme-modern .hero-date-card strong,
+.jasmine-card.theme-modern .invite-hero-content > p:last-child { color: var(--ref-gold-soft) !important; }
+.jasmine-card.theme-modern .invite-hero h1 { color: #f5f0df !important; }
+.jasmine-card.theme-modern .invite-hero h1 b { color: var(--ref-gold) !important; }
+.jasmine-card.theme-modern .couple-mark {
+  border-color: var(--ref-gold-soft);
+  color: var(--ref-gold-soft);
+  box-shadow: 0 0 0 8px #e4c78618;
+}
+.jasmine-card.theme-modern .hero-date-card {
+  border-color: #e4c786aa !important;
+  background: #21463f66;
+}
+.jasmine-card.theme-modern .hero-date-card span,
+.jasmine-card.theme-modern .hero-date-card em { color: #e7eadc !important; }
+.jasmine-card.theme-modern .invite-body,
+.jasmine-card.theme-modern .announcement-section,
+.jasmine-card.theme-modern .details-section,
+.jasmine-card.theme-modern .dress-code,
+.jasmine-card.theme-modern .venue-section {
+  background: var(--ref-paper) !important;
+  color: var(--ref-ink) !important;
+  border-color: var(--ref-gold-soft) !important;
+}
+.jasmine-card.theme-modern .schedule-section {
+  background-image:
+    linear-gradient(180deg, #365f58ed, #21463ff5),
+    var(--invite-background-image, none) !important;
+  color: #f5f0df !important;
+  border-color: var(--ref-gold-soft) !important;
+}
+.jasmine-card.theme-modern .schedule-section > h2 { color: #f5f0df !important; }
+.jasmine-card.theme-modern .schedule-section::after { border-color: #e4c78666; }
+.jasmine-card.theme-modern .schedule-day {
+  border-color: #e4c786 !important;
+  background: #e9eee7f2 !important;
+  box-shadow: 0 18px 40px #102e2938;
+}
+.jasmine-card.theme-modern .schedule-day-heading { border-bottom-color: var(--ref-gold) !important; }
+.jasmine-card.theme-modern .schedule-day-heading span,
+.jasmine-card.theme-modern .schedule-day-heading h3 { color: var(--ref-ink) !important; }
+.jasmine-card.theme-modern .schedule-day .timeline:before { background: var(--ref-gold) !important; }
+.jasmine-card.theme-modern .schedule-day .timeline-item > span {
+  background: linear-gradient(145deg, #dfb66e, #b27c2f) !important;
+  color: #21463f !important;
+}
+.jasmine-card.theme-modern .schedule-day .timeline-item div {
+  border-color: #b8c9bd !important;
+  background: #f5f7f1f5 !important;
+}
+.jasmine-card.theme-modern .schedule-day .timeline-item strong { color: var(--ref-ink) !important; }
+.jasmine-card.theme-modern .schedule-day .timeline-item small { color: #557068 !important; }
+.jasmine-card.theme-modern .schedule-nav {
+  border-color: var(--ref-gold-soft);
+  background: var(--ref-paper);
+  color: var(--ref-ink);
+}
+.jasmine-card.theme-modern .schedule-carousel-footer { color: #e4d6b7; }
+.jasmine-card.theme-modern .schedule-dots button { background: #b6c3b3; }
+.jasmine-card.theme-modern .schedule-dots button.active { background: var(--ref-gold-soft); }
+.jasmine-card.theme-modern footer { background: var(--ref-jade-deep) !important; color: var(--ref-gold-soft) !important; }
+
+/* Modern schedule carousel: each day is a focused slide with touch and button navigation. */
+.jasmine-card .schedule-section {
+  position: relative;
+  overflow: hidden;
+  background-image:
+    linear-gradient(180deg, #fffdf9e8, #f8f4ecf2),
+    var(--invite-background-image, none) !important;
+  background-position: center;
+  background-size: cover;
+}
+.jasmine-card .schedule-section > h2 {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 28px;
+  color: #21463f !important;
+  font-family: var(--khmer-display-font, "Noto Sans Khmer"), Arial, sans-serif !important;
+  font-size: clamp(18px, 3vw, 28px) !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+}
+.schedule-carousel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 680px);
+  margin: 0 auto;
+  touch-action: pan-y;
+}
+.schedule-viewport {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 24px;
+}
+.jasmine-card .schedule-days {
+  display: flex;
+  gap: 0;
+  margin-top: 0;
+  text-align: left;
+  transition: transform .35s cubic-bezier(.22,.8,.22,1);
+  will-change: transform;
+}
+.jasmine-card .schedule-day {
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: clamp(22px, 5vw, 34px);
+  border: 1px solid #d8c6a5 !important;
+  border-radius: 24px;
+  background: #fffdf9e8 !important;
+  box-shadow: 0 18px 40px #6e542316;
+}
+.jasmine-card .schedule-day-heading {
+  padding-bottom: 18px;
+  border-bottom-color: #d2a75e !important;
+}
+.jasmine-card .schedule-day-heading span {
+  color: #b47718 !important;
+  font-family: "Inter", Arial, sans-serif !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .2em;
+}
+.jasmine-card .schedule-day-heading h3 {
+  color: #252525 !important;
+  font-family: "Inter", "Noto Sans Khmer", Arial, sans-serif !important;
+  font-size: clamp(21px, 4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+.jasmine-card .schedule-day .timeline {
+  margin-top: 24px;
+  gap: 14px;
+}
+.jasmine-card .schedule-day .timeline:before {
+  left: 21px;
+  top: 5px;
+  bottom: 5px;
+  width: 2px;
+  background: #c99535 !important;
+}
+.jasmine-card .schedule-day .timeline-item {
+  grid-template-columns: 43px minmax(0, 1fr);
+  gap: 14px;
+  opacity: 0;
+  animation: scheduleItemIn .5s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: var(--delay);
+}
+.jasmine-card .schedule-day .timeline-item > span {
+  width: 43px;
+  height: 43px;
+  color: #fff !important;
+  background: linear-gradient(145deg, #d5a348, #b77b1e) !important;
+  font-family: "Inter", Arial, sans-serif !important;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 18px #ae761f35;
+}
+.jasmine-card .schedule-day .timeline-item div {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #dfd5c6 !important;
+  border-radius: 12px;
+  background: #ffffffed !important;
+  box-shadow: 0 7px 18px #6e54230e;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.jasmine-card .schedule-day .timeline-item div:hover {
+  transform: translateX(4px);
+  border-color: #c99535 !important;
+  box-shadow: 0 12px 24px #6e54231b;
+}
+.jasmine-card .schedule-day .timeline-item strong {
+  color: #1c1d1d !important;
+  font-family: "Inter", "Noto Sans Khmer", Arial, sans-serif !important;
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.jasmine-card .schedule-day .timeline-item small {
+  color: #637168 !important;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.schedule-nav {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #c99535;
+  border-radius: 50%;
+  background: #fffdf9;
+  color: #8b611e;
+  cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease, opacity .2s ease;
+}
+.schedule-nav:hover:not(:disabled) { transform: scale(1.06); background: #f7ead0; }
+.schedule-nav:disabled { cursor: default; opacity: .3; }
+.schedule-carousel-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 18px;
+  color: #8c7756;
+  font: 600 11px "Inter", Arial, sans-serif;
+  letter-spacing: .05em;
+}
+.schedule-dots { display: flex; gap: 8px; }
+.schedule-dots button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #d7c7a9;
+  cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease;
+}
+.schedule-dots button.active { transform: scale(1.35); background: #bd8527; }
+@keyframes scheduleItemIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 480px) {
+  .schedule-carousel { gap: 6px; }
+  .schedule-nav { flex-basis: 38px; width: 38px; height: 38px; }
+  .jasmine-card .schedule-day { padding: 20px 16px; border-radius: 20px; }
+  .jasmine-card .schedule-day-heading h3 { font-size: 20px; }
+  .jasmine-card .schedule-day .timeline-item { grid-template-columns: 37px minmax(0, 1fr); gap: 10px; }
+  .jasmine-card .schedule-day .timeline-item > span { width: 37px; height: 37px; }
+  .jasmine-card .schedule-day .timeline:before { left: 18px; }
+  .jasmine-card .schedule-day .timeline-item div { padding: 12px; }
+  .jasmine-card .schedule-day .timeline-item strong { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jasmine-card .schedule-days,
+  .jasmine-card .schedule-day .timeline-item,
+  .schedule-nav,
+  .schedule-dots button { transition: none !important; animation: none !important; }
+  .jasmine-card .schedule-day .timeline-item { opacity: 1; }
+}
+
+/* Keep carousel controls outside the layout flow so compact phone previews stay readable. */
+.jasmine-card .schedule-carousel {
+  display: block;
+  width: min(100%, 680px);
+}
+.jasmine-card .schedule-viewport { width: 100%; }
+.jasmine-card .schedule-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+}
+.jasmine-card .schedule-nav:hover:not(:disabled) { transform: translateY(-50%) scale(1.06); }
+.jasmine-card .schedule-nav-prev { left: 8px; }
+.jasmine-card .schedule-nav-next { right: 8px; }
+
+/* The reference palette is the schedule treatment in every invitation theme. */
+.jasmine-card .schedule-section {
+  background-image:
+    linear-gradient(180deg, #365f58ed, #21463ff5),
+    var(--invite-background-image, none) !important;
+  color: #f5f0df !important;
+  border-color: #e4c786 !important;
+}
+.jasmine-card .schedule-section::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border: 1px solid #e4c78666;
+  pointer-events: none;
+}
+.jasmine-card .schedule-section > h2 {
+  color: #21463f !important;
+  font-family: var(--khmer-display-font, "Noto Sans Khmer"), Arial, sans-serif !important;
+  font-size: clamp(18px, 3vw, 28px) !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+}
+.jasmine-card .schedule-day {
+  border-color: #e4c786 !important;
+  background: #e9eee7f2 !important;
+  box-shadow: 0 18px 40px #102e2938;
+}
+.jasmine-card .schedule-day-heading { border-bottom-color: #d3a45a !important; }
+.jasmine-card .schedule-day-heading span,
+.jasmine-card .schedule-day-heading h3 { color: #21443d !important; }
+.jasmine-card .schedule-day .timeline:before { background: #d3a45a !important; }
+.jasmine-card .schedule-day .timeline-item > span {
+  background: linear-gradient(145deg, #dfb66e, #b27c2f) !important;
+  color: #21463f !important;
+}
+.jasmine-card .schedule-day .timeline-item div {
+  border-color: #b8c9bd !important;
+  background: #f5f7f1f5 !important;
+}
+.jasmine-card .schedule-day .timeline-item strong { color: #21443d !important; }
+.jasmine-card .schedule-day .timeline-item small { color: #557068 !important; }
+.jasmine-card .schedule-carousel-footer { color: #e4d6b7; }
+
+@media (max-width: 480px) {
+  .jasmine-card .schedule-nav-prev { left: 8px; }
+  .jasmine-card .schedule-nav-next { right: 8px; }
+}
+
 /* Final petal rule: the explicit designer toggle must remain visible and
    animated even if another reduced-motion rule appears earlier in the file. */
 .jasmine-card.jasmine-card .petals {
@@ -4629,6 +4976,17 @@ input:focus, textarea:focus {
   font-weight: 800;
   letter-spacing: -.06em;
 }
+.jasmine-card.jasmine-card.number-modern .countdown-section .large-date strong,
+.jasmine-card.jasmine-card.number-modern .countdown-section .countdown-unit strong,
+.jasmine-card.jasmine-card.number-modern .countdown-section .month-calendar span {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-style: normal;
+  font-weight: 900 !important;
+  letter-spacing: -.08em;
+}
+.jasmine-card.jasmine-card.number-modern .countdown-section .large-date strong {
+  line-height: .84;
+}
 .jasmine-card.jasmine-card.date-text-classic .hero-date-card span,
 .jasmine-card.jasmine-card.date-text-classic .hero-date-card em {
   font-family: "Cormorant Garamond", Georgia, serif !important;
@@ -4752,13 +5110,66 @@ input:focus, textarea:focus {
 .jasmine-card .dress-code,
 .jasmine-card .schedule-section { background: #fff !important; border-color: #e7dfd1 !important; }
 .jasmine-card .announcement-section { background: #fcfbf8 !important; }
-.jasmine-card .countdown-section { background: #161616 !important; }
-.jasmine-card .countdown-section .large-date,
-.jasmine-card .countdown-section .countdown-unit { border-color: #ffffff32 !important; }
-.jasmine-card .countdown-section .large-date strong,
-.jasmine-card .countdown-section .countdown-unit strong { color: #f0cf92 !important; }
+.jasmine-card.jasmine-card .countdown-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0, #f5f8f2 0, #e9eee7 58%, #dfe8df 100%) !important;
+  color: #21463f !important;
+  border-color: #d3a45a !important;
+}
+.jasmine-card.jasmine-card .countdown-section .large-date,
+.jasmine-card.jasmine-card .countdown-section .countdown-unit { border-color: #b8c9bd !important; }
+.jasmine-card.jasmine-card .countdown-section .large-date strong,
+.jasmine-card.jasmine-card .countdown-section .countdown-unit strong { color: #21463f !important; }
+.jasmine-card.jasmine-card .countdown-section .large-date,
+.jasmine-card.jasmine-card .countdown-section .countdown-unit,
+.jasmine-card.jasmine-card .countdown-section .month-calendar { color: #21463f !important; }
+.jasmine-card.jasmine-card .countdown-section .countdown-unit {
+  background: #f5f7f1 !important;
+  border-color: #b8c9bd !important;
+  box-shadow: 0 14px 30px #21463f18;
+}
+.jasmine-card.jasmine-card .countdown-section .large-date { border-color: #d3a45a !important; }
+.jasmine-card.jasmine-card .countdown-section .month-calendar b,
+.jasmine-card.jasmine-card .countdown-section .month-calendar span { color: #21463f !important; }
+.jasmine-card.jasmine-card .countdown-section .month-calendar .wedding-day {
+  background: linear-gradient(145deg, #dfb66e, #b27c2f) !important;
+  color: #21463f !important;
+  box-shadow: 0 0 0 9px #d3a45a2b, 0 10px 24px #8c632633;
+}
+.jasmine-card.jasmine-card .countdown-section .large-date {
+  color: #21463f !important;
+}
+.jasmine-card.jasmine-card .countdown-section .large-date span,
+.jasmine-card.jasmine-card .countdown-section .large-date em,
+.jasmine-card.jasmine-card .countdown-section .countdown-unit span {
+  color: #557068 !important;
+  font-weight: 700 !important;
+}
+.jasmine-card.jasmine-card .countdown-section .large-date strong,
+.jasmine-card.jasmine-card .countdown-section .countdown-unit strong {
+  color: #21463f !important;
+}
+.jasmine-card.jasmine-card .countdown-section .month-calendar b,
+.jasmine-card.jasmine-card .countdown-section .month-calendar span {
+  color: #21463f !important;
+}
 .jasmine-card .map-button, .jasmine-card .calendar-button { background: #c49a52 !important; }
 .jasmine-card footer { background: #161616 !important; }
+
+/* Floral paper background for the invitation content below the cover. */
+.jasmine-card .invite-body,
+.jasmine-card .dress-code,
+.jasmine-card .venue-section,
+.jasmine-card .guestbook {
+  background-image:
+    linear-gradient(rgba(255, 253, 247, .82), rgba(255, 253, 247, .82)),
+    url("/wedding-floral-background.jpg") !important;
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 
 /* Album carousel: warm editorial gallery with a centered hero photo. */
 .jasmine-card .prewedding-media {
@@ -5113,7 +5524,7 @@ input:focus, textarea:focus {
 .jasmine-card .venue-section iframe {
   visibility: visible !important;
 }
-.jasmine-card .reveal-on-scroll {
+.live-preview .jasmine-card .reveal-on-scroll {
   opacity: 1 !important;
   transform: none !important;
 }

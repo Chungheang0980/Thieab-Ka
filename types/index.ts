@@ -31,6 +31,7 @@ export interface Wedding {
   photoUrls: string;
   videoUrl: string;
   backgroundUrl: string;
+  nameArtworkUrl?: string;
 }
 
 export interface Guest {

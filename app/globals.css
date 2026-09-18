@@ -325,6 +325,7 @@ td code { background: #f2eee6; color: #705124; padding: 5px 8px; font-family: ui
 .guest-greeting { width: min(100%, 390px); min-height: 58px; display: flex; align-items: center; justify-content: center; max-width: 100%; padding: 13px 20px; border: 1px solid #cda967; background: #fffaf0; color: #5b4225; font-size: 13px; line-height: 1.6; margin: 34px 0 0; text-align: center; overflow-wrap: anywhere; }
 .guest-greeting:after { display: none; }
 .invite-hero h1 { font-family: "Cormorant Garamond", var(--khmer-display-font, "Noto Serif Khmer"); display: flex; flex-direction: column; align-self: center; margin: 0; font-size: clamp(54px, 7vw, 88px); font-weight: 700; line-height: 1.12; color: #bd7d38; text-transform: uppercase; max-width: min(650px, 78%); }
+.invite-name-artwork { display: block; width: min(88%, 560px); max-height: min(38vh, 360px); height: auto; object-fit: contain; margin: 0 auto; filter: drop-shadow(0 8px 10px #3b261440); }
 .invite-hero h1 b { color: #bd7d38; font: italic clamp(26px, 3vw, 38px) Georgia, serif; margin: 12px 0; }
 .hero-date-card { position: relative; width: min(100%, 330px); min-height: 78px; margin: 22px 0 10px; padding: 12px 18px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 13px; text-align: center; color: #4f3920; border-top: 1px solid #bd9145; border-bottom: 1px solid #bd9145; background: #fff8e899; box-shadow: 0 10px 24px #7a4f2112; }
 .hero-date-card span, .hero-date-card em { font: 13px Georgia, serif; letter-spacing: 2px; text-transform: uppercase; color: #7c5b2b; }
@@ -3710,6 +3711,7 @@ input:focus, textarea:focus {
   margin-top: 10px;
 }
 .jasmine-card .invite-label { order: 1; }
+.jasmine-card .invite-name-artwork { order: 2; }
 .jasmine-card .invite-hero h1 { order: 2; }
 .jasmine-card .hero-guest { order: 3; }
 .jasmine-card .ornament { order: 4; }
@@ -4196,6 +4198,7 @@ input:focus, textarea:focus {
     animation: none !important;
   }
 }
+
 .jasmine-card .invite-hero-content::before,
 .jasmine-card .invite-hero-content::after {
   display: none !important;
@@ -4311,6 +4314,28 @@ input:focus, textarea:focus {
   bottom: -170px;
   transform: translateX(50%);
   animation: none;
+}
+
+/* Dark calendar treatment matching the compact reference calendar. */
+.jasmine-card .calendar-month-header { width: min(100%, 520px); display: flex; align-items: center; justify-content: center; margin: 4px auto 18px; }
+.jasmine-card .calendar-month-header strong { font: 500 clamp(22px, 5vw, 30px) Arial, sans-serif; color: #f3f3f5; }
+.jasmine-card .calendar-month-header button { width: 56px; height: 56px; display: grid; place-items: center; border: 1px solid #202126; border-radius: 12px; background: #0b0b0d; color: #8f9099; cursor: pointer; }
+.jasmine-card .calendar-month-header button:hover { color: #f3f3f5; border-color: #3d3e44; }
+.jasmine-card .countdown-section .month-calendar { width: min(100%, 520px) !important; max-width: none !important; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px 6px; margin: 0 auto 34px !important; }
+.jasmine-card .countdown-section .month-calendar b { min-height: 34px; color: #8f9099 !important; font: 500 16px Arial, sans-serif; }
+.jasmine-card .countdown-section .month-calendar span { min-height: 52px; color: #f3f3f5 !important; font: 400 25px Arial, sans-serif; }
+.jasmine-card .countdown-section .month-calendar span.muted-day { color: #686a73 !important; }
+.jasmine-card .countdown-section .month-calendar span.wedding-day { min-height: 52px; border-radius: 12px; background: #f4f4f5 !important; color: #17171a !important; box-shadow: none; animation: none; }
+.jasmine-card .countdown-section .calendar-button { min-height: 50px; border-radius: 4px; background: #d19a23 !important; color: #17130c !important; box-shadow: none !important; }
+.jasmine-card .calendar-month-header button { display: grid !important; }
+.jasmine-card .calendar-month-header strong { color: #d49a2b !important; text-shadow: 0 1px 0 #fff6d6; }
+.jasmine-card .countdown-section .month-calendar b { color: #c88716 !important; }
+.jasmine-card .countdown-section .month-calendar span.wedding-day { background: #d49a2b !important; color: #173f39 !important; box-shadow: 0 0 0 9px #d49a2b2e, 0 5px 16px #b8790c55; }
+.jasmine-card .countdown-section .calendar-button { background: #d49a2b !important; color: #241a0d !important; }
+@media (max-width: 560px) {
+  .jasmine-card .countdown-section .month-calendar { gap: 8px 2px; }
+  .jasmine-card .countdown-section .month-calendar span { min-height: 44px; font-size: 20px; }
+  .jasmine-card .countdown-section .month-calendar span.wedding-day { min-height: 44px; }
 }
 
 /* Reference-inspired Modern theme: jade paper, antique gold, and Khmer invitation framing. */

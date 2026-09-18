@@ -78,6 +78,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [photoShapes, setPhotoShapes] = useState<Record<string, "portrait" | "landscape" | "square">>({});
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [calendarViewMonth, setCalendarViewMonth] = useState(() => new Date());
   const scheduleTouchStart = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fallbackDate = "2026-12-12";
@@ -93,6 +94,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const monthText = monthNames[dateMonth - 1];
   const weekdayText = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "UTC" }).format(displayDate);
   const yearText = String(dateYear);
+  const nameArtworkUrl = wedding.nameArtworkUrl || "/sai-rachana-gold.png";
   const youtubeEmbedUrl = getYouTubeEmbedUrl(wedding.musicUrl || "");
   const videoEmbedUrl = getVideoEmbedUrl(wedding.videoUrl || "");
   const hasDirectVideo = isDirectVideoUrl(wedding.videoUrl || "");
@@ -180,6 +182,10 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
     return () => window.clearInterval(timer);
   }, [targetTime]);
 
+  useEffect(() => {
+    setCalendarViewMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+  }, [safeDate]);
+
   function submit(status: RSVPStatus) {
     onRSVP?.(status);
     setNotice(status === "attending" ? "អរគុណ! យើងខ្ញុំរង់ចាំជួបលោកអ្នក" : "អរគុណសម្រាប់ការឆ្លើយតប");
@@ -220,10 +226,17 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
     return raw;
   }
 
-  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-  const monthDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  const calendarOffset = (monthStart.getDay() + 6) % 7;
-  const calendarCells = Array.from({ length: calendarOffset + monthDays }, (_, index) => index < calendarOffset ? 0 : index - calendarOffset + 1);
+  const calendarYear = calendarViewMonth.getFullYear();
+  const calendarMonth = calendarViewMonth.getMonth();
+  const calendarOffset = calendarViewMonth.getDay();
+  const calendarDaysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const previousMonthDays = new Date(calendarYear, calendarMonth, 0).getDate();
+  const calendarCells = Array.from({ length: 42 }, (_, index) => {
+    const dayNumber = index - calendarOffset + 1;
+    if (dayNumber < 1) return { day: previousMonthDays + dayNumber, muted: true, key: `prev-${dayNumber}` };
+    if (dayNumber > calendarDaysInMonth) return { day: dayNumber - calendarDaysInMonth, muted: true, key: `next-${dayNumber}` };
+    return { day: dayNumber, muted: false, key: `current-${dayNumber}` };
+  });
 
   return (
     <article className={`invitation jasmine-card theme-${wedding.theme} font-${wedding.khmerFont || "serif"} date-${wedding.dateStyle || "classic"} number-${wedding.numberStyle || "classic"} date-text-${wedding.dateTextStyle || "classic"} ${compact ? "compact" : ""}`} style={cardStyle}>
@@ -236,8 +249,12 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
         <div className="card-floral card-floral-bottom" aria-hidden="true"><span /><span /><span /></div>
         <div className="invite-hero-content">
           <span className="invite-label">Welcome to our wedding</span>
+          {nameArtworkUrl ? (
+            <img className="invite-name-artwork" src={nameArtworkUrl} alt={`${wedding.groomName} & ${wedding.brideName}`} />
+          ) : (
+            <h1><span>{wedding.groomName}</span><b>&</b><span>{wedding.brideName}</span></h1>
+          )}
           <div className="couple-mark" aria-hidden="true">{wedding.brideName.slice(0, 1)}{wedding.groomName.slice(0, 1)}</div>
-          <h1><span>{wedding.groomName}</span><b>&</b><span>{wedding.brideName}</span></h1>
           {guest && (
             <div className="hero-guest">
               <small>INVITATION FOR</small>
@@ -353,8 +370,11 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
             ))}
           </div>
           <div className="month-calendar">
-            {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => <b key={day}>{day}</b>)}
-            {calendarCells.map((day, index) => <span className={day === date.getDate() ? "wedding-day" : ""} key={`${day}-${index}`}>{day || ""}</span>)}
+            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => <b key={day}>{day}</b>)}
+            {calendarCells.map((cell) => {
+              const selected = !cell.muted && calendarYear === date.getFullYear() && calendarMonth === date.getMonth() && cell.day === date.getDate();
+              return <span className={`${cell.muted ? "muted-day" : ""} ${selected ? "wedding-day" : ""}`} key={cell.key}>{cell.day}</span>;
+            })}
           </div>
           <a className="map-button calendar-button" href={calendarUrl} target="_blank" rel="noreferrer"><CalendarDays size={17} /> Add to Calendar</a>
         </section>

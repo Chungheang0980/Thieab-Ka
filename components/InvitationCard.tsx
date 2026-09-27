@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, ChevronLeft, ChevronRight, Copy, Gift, Image, MapPin, Music2, Video } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Copy, Gift, MapPin, Music2 } from "lucide-react";
 import QRCode from "react-qr-code";
 import { Guest, RSVPStatus, Wedding } from "@/types";
 import { useEffect, useRef, useState } from "react";
@@ -277,41 +277,18 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
       </section>
 
       <section className="dress-code reveal-on-scroll">
-        <span aria-hidden="true">❦</span>
-        <strong>Dress Code</strong>
-        <p>{wedding.dressCode || "Elegant evening attire in soft neutrals, gold, ivory, or classic black."}</p>
+        <strong>ការស្លៀកពាក់</strong>
+        <p>{wedding.dressCode || "សូមស្លៀកពាក់ឱ្យមានភាពស្រស់ស្អាត និងឆើតឆាយ ក្នុងពណ៌ស្រាលៗ ពណ៌មាស ពណ៌សភ្លុក ឬពណ៌ខ្មៅបុរាណ។"}</p>
       </section>
 
       <section className="schedule-section reveal-on-scroll">
-        <h2>{wedding.scheduleTitle || "Wedding Day Schedule"}</h2>
-        <div className="schedule-carousel" onTouchStart={handleScheduleTouchStart} onTouchEnd={handleScheduleTouchEnd}>
-          {schedule.length > 1 && <button className="schedule-nav schedule-nav-prev" type="button" onClick={() => moveSchedule(-1)} disabled={activeScheduleIndex === 0} aria-label="Previous schedule day"><ChevronLeft size={20} /></button>}
-          <div className="schedule-viewport">
-            <div className="schedule-days" style={{ transform: `translateX(-${activeScheduleIndex * 100}%)` }}>
-              {schedule.map((day, dayIndex) => (
-                <div className="schedule-day" key={`${day.title}-${dayIndex}`}>
-                  <div className="schedule-day-heading"><span>DAY {String(dayIndex + 1).padStart(2, "0")}</span><h3>{day.title}</h3></div>
-                  <div className="timeline">
-                    {day.items.map(([time, label], index) => (
-                      <div className="timeline-item" style={{ "--delay": `${index * 70}ms` } as React.CSSProperties} key={`${dayIndex}-${time}-${label}`}>
-                        <span>{String(index + 1).padStart(2, "0")}</span>
-                        <div><strong>{time}</strong><small>{label}</small></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          {schedule.length > 1 && <button className="schedule-nav schedule-nav-next" type="button" onClick={() => moveSchedule(1)} disabled={activeScheduleIndex === schedule.length - 1} aria-label="Next schedule day"><ChevronRight size={20} /></button>}
-        </div>
-        {schedule.length > 1 && <div className="schedule-carousel-footer"><span>Swipe to explore the days</span><div className="schedule-dots">{schedule.map((day, index) => <button type="button" key={day.title + index} className={index === activeScheduleIndex ? "active" : ""} onClick={() => setScheduleIndex(index)} aria-label={`Show ${day.title}`} />)}</div></div>}
+        <img className="schedule-poster" src="/khmer-schedule-poster.png" alt="កាលវិភាគពិធីមង្គលការ" />
       </section>
 
       <section className="invite-body">
         {(photoUrls.length > 0 || videoEmbedUrl || hasDirectVideo) && (
           <section className="prewedding-media reveal-on-scroll">
-            <div className="media-heading"><Image size={17} /><span>Wedding Album</span></div>
+            <div className="media-heading"><span>អាល់ប៊ុមអាពាហ៍ពិពាហ៍</span></div>
             {photoUrls.length > 0 && (
               <div className="album-single">
                 <button className="album-single-photo" type="button" onClick={() => setLightboxIndex(albumIndex)}>
@@ -339,7 +316,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
             )}
             {(videoEmbedUrl || hasDirectVideo) && (
               <div className="prewedding-video">
-                <div><Video size={16} /><span>Pre-wedding video</span></div>
+                <div><span>វីដេអូមុនពិធីមង្គលការ</span></div>
                 {videoEmbedUrl ? (
                   <iframe
                     title="Pre-wedding video"
@@ -365,7 +342,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
             {Object.entries(countdown).map(([key, value]) => (
               <div className="countdown-unit" key={key}>
                 <strong>{String(value).padStart(2, "0")}</strong>
-                <span>{key === "minutes" ? "MIN" : key === "seconds" ? "SEC" : key.toUpperCase()}</span>
+                <span>{key === "days" ? "ថ្ងៃ" : key === "hours" ? "ម៉ោង" : key === "minutes" ? "នាទី" : "វិនាទី"}</span>
               </div>
             ))}
           </div>

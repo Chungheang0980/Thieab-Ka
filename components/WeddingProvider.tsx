@@ -38,7 +38,11 @@ export function WeddingProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       const data = await response.json();
-      setWedding({ ...defaultWedding, ...(data.wedding ?? {}) });
+      const loadedWedding = { ...defaultWedding, ...(data.wedding ?? {}) };
+      if (loadedWedding.dressCode === "Elegant evening attire in soft neutrals, gold, ivory, or classic black.") {
+        loadedWedding.dressCode = defaultWedding.dressCode;
+      }
+      setWedding(loadedWedding);
       setGuests(data.guests ?? []);
       setUsername(data.username ?? "");
       setReady(true);

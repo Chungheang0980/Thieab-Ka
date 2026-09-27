@@ -325,7 +325,7 @@ td code { background: #f2eee6; color: #705124; padding: 5px 8px; font-family: ui
 .guest-greeting { width: min(100%, 390px); min-height: 58px; display: flex; align-items: center; justify-content: center; max-width: 100%; padding: 13px 20px; border: 1px solid #cda967; background: #fffaf0; color: #5b4225; font-size: 13px; line-height: 1.6; margin: 34px 0 0; text-align: center; overflow-wrap: anywhere; }
 .guest-greeting:after { display: none; }
 .invite-hero h1 { font-family: "Cormorant Garamond", var(--khmer-display-font, "Noto Serif Khmer"); display: flex; flex-direction: column; align-self: center; margin: 0; font-size: clamp(54px, 7vw, 88px); font-weight: 700; line-height: 1.12; color: #bd7d38; text-transform: uppercase; max-width: min(650px, 78%); }
-.invite-name-artwork { display: block; width: min(88%, 560px); max-height: min(38vh, 360px); height: auto; object-fit: contain; margin: 0 auto; filter: drop-shadow(0 8px 10px #3b261440); }
+.invite-name-artwork { display: block; width: min(64%, 420px); max-height: min(27vh, 250px); height: auto; object-fit: contain; margin: 120px auto 0; filter: drop-shadow(0 8px 10px #3b261440); }
 .invite-hero h1 b { color: #bd7d38; font: italic clamp(26px, 3vw, 38px) Georgia, serif; margin: 12px 0; }
 .hero-date-card { position: relative; width: min(100%, 330px); min-height: 78px; margin: 22px 0 10px; padding: 12px 18px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 13px; text-align: center; color: #4f3920; border-top: 1px solid #bd9145; border-bottom: 1px solid #bd9145; background: #fff8e899; box-shadow: 0 10px 24px #7a4f2112; }
 .hero-date-card span, .hero-date-card em { font: 13px Georgia, serif; letter-spacing: 2px; text-transform: uppercase; color: #7c5b2b; }
@@ -407,6 +407,12 @@ td code { background: #f2eee6; color: #705124; padding: 5px 8px; font-family: ui
 .schedule-editor-card textarea { background: #fff; border-color: #d8cbb9; }
 @media (max-width: 700px) {
   .schedule-editor-grid { grid-template-columns: 1fr; }
+}
+
+/* Keep every invitation text element in the selected Khmer typeface. */
+.invitation,
+.invitation :where(*) {
+  font-family: var(--khmer-display-font, "Noto Serif Khmer") !important;
 }
 .jasmine-card .schedule-section > h2 {
   margin: 0;
@@ -4314,6 +4320,99 @@ input:focus, textarea:focus {
   bottom: -170px;
   transform: translateX(50%);
   animation: none;
+}
+
+/* Keep the schedule and dress-code page backgrounds consistent with the invitation. */
+.jasmine-card .schedule-section,
+.jasmine-card .dress-code {
+  background: url("/wedding-floral-background.jpg") center / 100% 100% no-repeat !important;
+}
+
+.jasmine-card .media-heading {
+  font-family: var(--khmer-body-font, "Noto Serif Khmer") !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+.jasmine-card .prewedding-video > div {
+  font-family: var(--khmer-body-font, "Noto Serif Khmer") !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.jasmine-card .countdown-unit {
+  width: min(124px, 100%);
+  aspect-ratio: 1;
+  min-height: 0;
+  justify-self: center;
+  padding: 16px 10px;
+  border: 1px solid #b9c9bf !important;
+  border-radius: 50%;
+  background: #c8953f !important;
+  box-shadow: 0 0 0 10px #e0e4d9, 0 10px 22px #6c542333;
+}
+.jasmine-card .countdown-unit strong {
+  color: var(--invite-ink, #21443d) !important;
+  font-family: Georgia, serif !important;
+  font-size: 38px !important;
+  line-height: 1;
+}
+.jasmine-card .countdown-unit span {
+  color: var(--invite-ink, #21443d) !important;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer") !important;
+  font-size: 13px !important;
+  font-weight: 600;
+  text-transform: none;
+}
+
+/* Refined Khmer typography for the dress-code section. */
+.jasmine-card .dress-code strong {
+  margin: 8px 0 10px;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer") !important;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.jasmine-card .dress-code p {
+  width: min(100%, 420px);
+  margin: 0 auto;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer") !important;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 2.15;
+  letter-spacing: 0;
+}
+
+/* Match the schedule heading to the main Khmer heading scale. */
+.jasmine-card .schedule-day-heading h3 {
+  font-family: var(--khmer-display-font, "Noto Serif Khmer") !important;
+  font-size: 20px !important;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Carry the invitation floral paper into the schedule page. */
+.jasmine-card .schedule-section {
+  background: url("/wedding-floral-background.jpg") center / cover no-repeat !important;
+}
+
+.jasmine-card .dress-code {
+  background: url("/wedding-floral-background.jpg") center / cover no-repeat !important;
+}
+
+.jasmine-card .schedule-poster {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid #b8a26d;
+  box-shadow: 0 18px 40px #243d3540;
 }
 
 /* Dark calendar treatment matching the compact reference calendar. */

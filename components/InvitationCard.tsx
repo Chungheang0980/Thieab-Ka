@@ -99,13 +99,15 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const videoEmbedUrl = getVideoEmbedUrl(wedding.videoUrl || "");
   const hasDirectVideo = isDirectVideoUrl(wedding.videoUrl || "");
   const photoUrls = parsePhotoUrls(wedding.photoUrls || "").slice(0, 8);
+  const dressCodeColors = (wedding.dressCodeColors || []).slice(0, 4).filter((color) => /^#[0-9a-f]{6}$/i.test(color));
   const calendarStart = `${safeDate.replace(/-/g, "")}T${safeTime.replace(":", "")}00`;
   const calendarEndDate = new Date(date.getTime() + 4 * 60 * 60 * 1000);
   const calendarEnd = `${calendarEndDate.getFullYear()}${String(calendarEndDate.getMonth() + 1).padStart(2, "0")}${String(calendarEndDate.getDate()).padStart(2, "0")}T${String(calendarEndDate.getHours()).padStart(2, "0")}${String(calendarEndDate.getMinutes()).padStart(2, "0")}00`;
   const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${wedding.brideName} & ${wedding.groomName} Wedding`)}&dates=${calendarStart}/${calendarEnd}&details=${encodeURIComponent(wedding.message)}&location=${encodeURIComponent(`${wedding.venue}, ${wedding.address}`)}`;
   const cardStyle = {
     ...(wedding.backgroundUrl ? { "--invite-background-image": `url("${wedding.backgroundUrl}")` } : {}),
-    "--invite-name-size": `${wedding.nameFontSize || 72}px`
+    "--invite-name-size": `${wedding.nameFontSize || 72}px`,
+    "--guestbook-title-size": `${wedding.guestbookTitleFontSize || 18}px`
   } as React.CSSProperties;
   const schedule = parseSchedule(wedding.schedule);
   const activeScheduleIndex = Math.min(scheduleIndex, Math.max(schedule.length - 1, 0));
@@ -279,6 +281,15 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
       <section className="dress-code reveal-on-scroll">
         <strong>ការស្លៀកពាក់</strong>
         <p>{wedding.dressCode || "សូមស្លៀកពាក់ឱ្យមានភាពស្រស់ស្អាត និងឆើតឆាយ ក្នុងពណ៌ស្រាលៗ ពណ៌មាស ពណ៌សភ្លុក ឬពណ៌ខ្មៅបុរាណ។"}</p>
+        {dressCodeColors.length > 0 && (
+          <div className="dress-code-palette" role="list" aria-label="ពណ៌សម្លៀកបំពាក់">
+            {dressCodeColors.map((color, index) => (
+              <div role="listitem" key={index} aria-label={`ពណ៌សម្លៀកបំពាក់ ${color}`}>
+                <i style={{ backgroundColor: color }} aria-hidden="true" />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="schedule-section reveal-on-scroll">
@@ -366,10 +377,12 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
         </section>
         {guest && (
           <>
-            <div className="lucky-ticket">
-              <div><Gift size={22} /><span><small>លេខសំណាងរបស់លោកអ្នក</small><strong>{guest.luckyId}</strong></span></div>
-              <button title="Copy lucky ID" onClick={() => navigator.clipboard?.writeText(guest.luckyId)}><Copy size={16} /></button>
-            </div>
+            {wedding.showLuckyId !== false && (
+              <div className="lucky-ticket">
+                <div><Gift size={22} /><span><small>លេខសំណាងរបស់លោកអ្នក</small><strong>{guest.luckyId}</strong></span></div>
+                <button title="ចម្លងលេខសំណាង" aria-label="ចម្លងលេខសំណាង" onClick={() => navigator.clipboard?.writeText(guest.luckyId)}><Copy size={16} /></button>
+              </div>
+            )}
             <div className="rsvp">
               <span>តើលោកអ្នកអាចចូលរួមបានទេ?</span>
               <div>
@@ -399,17 +412,17 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
           </div>
         )}
         <section className="guestbook reveal-on-scroll">
-          <h2>Guestbook</h2>
-          <button className="map-button" type="button" onClick={() => setWishFormOpen((current) => !current)}>Send Wishes</button>
+          <h2>{wedding.guestbookTitle ?? "សៀវភៅជូនពរ"}</h2>
+          <button className="map-button" type="button" onClick={() => setWishFormOpen((current) => !current)}>{wedding.guestbookButtonText ?? "ផ្ញើសារជូនពរ"}</button>
           {wishFormOpen && (
             <form className="wish-form" onSubmit={submitWish}>
-              <input value={wishName} onChange={(event) => setWishName(event.target.value)} placeholder="Your name" />
-              <textarea value={wishMessage} onChange={(event) => setWishMessage(event.target.value)} placeholder="Write your message" />
-              <button className="primary-button" type="submit">Send</button>
+              <input value={wishName} onChange={(event) => setWishName(event.target.value)} placeholder="ឈ្មោះរបស់អ្នក" aria-label="ឈ្មោះរបស់អ្នក" />
+              <textarea value={wishMessage} onChange={(event) => setWishMessage(event.target.value)} placeholder="សរសេរសារជូនពររបស់អ្នក..." aria-label="សារជូនពរ" />
+              <button className="primary-button" type="submit">ផ្ញើសារ</button>
             </form>
           )}
           <div className="wish-list">
-            {wishes.length === 0 ? <p>No wishes yet. Be the first!</p> : wishes.map((wish, index) => (
+            {wishes.length === 0 ? <p>{wedding.guestbookEmptyText ?? "មិនទាន់មានសារជូនពរនៅឡើយទេ។ សូមសរសេរសារជូនពរមុនគេ!"}</p> : wishes.map((wish, index) => (
               <div className="wish-item" key={`${wish.name}-${index}`}>
                 <strong>{wish.name}</strong>
                 <span>{wish.message}</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Eye, Image, Link2, Music2, QrCode, Save, Trash2, Upload, Video } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 import { InvitationCard } from "@/components/InvitationCard";
@@ -21,6 +21,7 @@ export default function Designer() {
   const numberStyles: [NumberStyleId, string][] = [["classic", "Classic"], ["italic", "Italic gold"], ["modern", "Modern bold"]];
   const dateTextStyles: [DateTextStyleId, string][] = [["classic", "Classic"], ["minimal", "Minimal"], ["editorial", "Editorial"]];
   const photoUrls = parseMediaUrls(wedding.photoUrls);
+  const dressCodeColors = (wedding.dressCodeColors || []).slice(0, 4);
   const scheduleDays = parseScheduleEditor(wedding.schedule);
 
   function updateScheduleDay(index: number, patch: Partial<ScheduleEditorDay>) {
@@ -130,7 +131,39 @@ export default function Designer() {
             <div className="section-title"><span>03</span><div><h2>ខ្លឹមសារធៀបការ</h2><p>Invitation content</p></div></div>
             <div className="form-grid">
               <label className="full">Announcement text<textarea rows={2} value={wedding.announcementText || ""} onChange={(e) => updateWedding({ announcementText: e.target.value })} /></label>
-              <label className="full">Dress code<textarea rows={2} value={wedding.dressCode || ""} onChange={(e) => updateWedding({ dressCode: e.target.value })} /></label>
+              <label className="full">ការស្លៀកពាក់<textarea rows={2} value={wedding.dressCode || ""} onChange={(e) => updateWedding({ dressCode: e.target.value })} /></label>
+              <fieldset className="full dress-code-colors">
+                <legend>ពណ៌សម្លៀកបំពាក់</legend>
+                <p>អាចបន្ថែមពណ៌សម្លៀកបំពាក់បានរហូតដល់ ៤ ពណ៌។ សូមជ្រើសរើសពណ៌ ឬបញ្ចូលកូដពណ៌។</p>
+                <div className="dress-code-color-grid">
+                  {dressCodeColors.map((color, index) => (
+                    <DressCodeColorInput
+                      key={index}
+                      color={color}
+                      index={index}
+                      onChange={(value) => updateWedding({ dressCodeColors: dressCodeColors.map((current, i) => i === index ? value : current) })}
+                      onRemove={() => updateWedding({ dressCodeColors: dressCodeColors.filter((_, i) => i !== index) })}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  disabled={dressCodeColors.length >= 4}
+                  onClick={() => updateWedding({ dressCodeColors: [...dressCodeColors, ["#D4AF37", "#F5E6CB", "#E8D6D0", "#161616"][dressCodeColors.length]] })}
+                >បន្ថែមពណ៌ ({khmerNumber(dressCodeColors.length)}/៤)</button>
+              </fieldset>
+              <label className="full">ចំណងជើងសៀវភៅជូនពរ<input value={wedding.guestbookTitle ?? "សៀវភៅជូនពរ"} onChange={(event) => updateWedding({ guestbookTitle: event.target.value })} /></label>
+              <label className="name-size-control">
+                <span><strong>ទំហំចំណងជើងសៀវភៅជូនពរ</strong><small>Guestbook title size</small></span>
+                <div>
+                  <input type="range" min="12" max="32" step="1" value={wedding.guestbookTitleFontSize || 18} onChange={(event) => updateWedding({ guestbookTitleFontSize: Number(event.target.value) })} aria-label="ទំហំចំណងជើងសៀវភៅជូនពរ" />
+                  <input type="number" min="12" max="32" value={wedding.guestbookTitleFontSize || 18} onChange={(event) => updateWedding({ guestbookTitleFontSize: Math.min(32, Math.max(12, Number(event.target.value) || 12)) })} aria-label="ទំហំចំណងជើងសៀវភៅជូនពរជាភីកសែល" />
+                  <small>px</small>
+                </div>
+              </label>
+              <label className="full">អត្ថបទលើប៊ូតុងជូនពរ<input value={wedding.guestbookButtonText ?? "ផ្ញើសារជូនពរ"} onChange={(event) => updateWedding({ guestbookButtonText: event.target.value })} /></label>
+              <label className="full">សារពេលមិនទាន់មានពាក្យជូនពរ<textarea rows={2} value={wedding.guestbookEmptyText ?? "មិនទាន់មានសារជូនពរនៅឡើយទេ។ សូមសរសេរសារជូនពរមុនគេ!"} onChange={(event) => updateWedding({ guestbookEmptyText: event.target.value })} /></label>
               <label className="full">Schedule title<input value={wedding.scheduleTitle || "Wedding Day Schedule"} onChange={(e) => updateWedding({ scheduleTitle: e.target.value })} /></label>
               <div className="full schedule-editor-grid">
                 {scheduleDays.map((day, index) => (
@@ -212,6 +245,7 @@ export default function Designer() {
               </div>
             </div>
             <label className="toggle-row"><span><strong>ផ្ការីកធ្លាក់</strong><small>Falling petal animation</small></span><input type="checkbox" checked={wedding.animation} onChange={(e) => updateWedding({ animation: e.target.checked })} /><i /></label>
+            <label className="toggle-row"><span><strong>បង្ហាញលេខសំណាង</strong><small>កំណត់ការបង្ហាញលេខសំណាងនៅលើធៀបការ</small></span><input type="checkbox" checked={wedding.showLuckyId !== false} onChange={(e) => updateWedding({ showLuckyId: e.target.checked })} /><i /></label>
             <div className="background-picker">
               <div><strong>រូបភាពផ្ទៃក្រោយ</strong><small>Upload a simple background for the invitation cover</small></div>
               <div className="media-drop-zone">
@@ -342,6 +376,50 @@ export default function Designer() {
         </aside>
       </div>
     </AdminShell>
+  );
+}
+
+function khmerNumber(value: number) {
+  return String(value).replace(/\d/g, (digit) => "០១២៣៤៥៦៧៨៩"[Number(digit)]);
+}
+
+function DressCodeColorInput({ color, index, onChange, onRemove }: {
+  color: string;
+  index: number;
+  onChange: (color: string) => void;
+  onRemove: () => void;
+}) {
+  const [code, setCode] = useState(color);
+  const [showError, setShowError] = useState(false);
+  const valid = /^#[0-9a-f]{6}$/i.test(code);
+  useEffect(() => { setCode(color); setShowError(false); }, [color]);
+
+  return (
+    <div className="dress-code-color-field">
+      <label htmlFor={`dress-code-color-${index}`}>ពណ៌ទី {khmerNumber(index + 1)}</label>
+      <div>
+        <input type="color" value={color} onChange={(event) => onChange(event.target.value)} aria-label={`ជ្រើសរើសពណ៌សម្លៀកបំពាក់ទី ${khmerNumber(index + 1)}`} />
+        <input
+          id={`dress-code-color-${index}`}
+          type="text"
+          value={code}
+          maxLength={7}
+          placeholder="#D4AF37"
+          spellCheck={false}
+          aria-label={`កូដពណ៌សម្លៀកបំពាក់ទី ${khmerNumber(index + 1)}`}
+          aria-invalid={showError && !valid}
+          aria-describedby={showError && !valid ? `dress-code-color-error-${index}` : undefined}
+          onChange={(event) => {
+            const next = event.target.value;
+            setCode(next);
+            if (/^#[0-9a-f]{6}$/i.test(next)) onChange(next.toUpperCase());
+          }}
+          onBlur={() => setShowError(!valid)}
+        />
+        <button type="button" className="icon-button" onClick={onRemove} aria-label={`លុបពណ៌សម្លៀកបំពាក់ទី ${khmerNumber(index + 1)}`}><Trash2 size={16} /></button>
+      </div>
+      {showError && !valid && <small id={`dress-code-color-error-${index}`} role="alert">សូមបញ្ចូលកូដពណ៌ដូចជា #D4AF37។</small>}
+    </div>
   );
 }
 

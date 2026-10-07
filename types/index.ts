@@ -15,6 +15,12 @@ export interface Wedding {
   message: string;
   announcementText: string;
   dressCode: string;
+  dressCodeColors?: string[];
+  showLuckyId?: boolean;
+  guestbookTitleFontSize?: number;
+  guestbookTitle?: string;
+  guestbookButtonText?: string;
+  guestbookEmptyText?: string;
   scheduleTitle: string;
   schedule: string;
   theme: ThemeId;

@@ -5690,3 +5690,27 @@ input:focus, textarea:focus {
   transform: translateX(50%);
   animation: none;
 }
+.dress-code-colors { grid-column: 1 / -1; min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--line); background: #fffdf7; }
+.dress-code-colors legend { padding: 0 6px; font-size: 12px; font-weight: 600; }
+.dress-code-colors > p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.dress-code-color-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; margin-bottom: 16px; }
+.dress-code-color-field { display: grid; gap: 7px; min-width: 0; }
+.dress-code-color-field > div { display: flex; align-items: center; gap: 10px; }
+.dress-code-color-field input[type="color"] { width: 48px; height: 44px; padding: 4px; cursor: pointer; flex-shrink: 0; }
+.dress-code-color-field input[type="text"] { min-width: 0; min-height: 44px; font-family: ui-monospace, monospace; }
+.dress-code-color-field .icon-button { width: 44px; height: 44px; }
+.dress-code-color-field > small { color: var(--red); font-size: 12px; }
+.dress-code-colors .secondary-button { min-height: 44px; }
+.dress-code-colors .secondary-button:disabled { opacity: .5; cursor: default; }
+.dress-code-color-field input:focus-visible { outline: 2px solid var(--gold-dark); outline-offset: 3px; }
+
+.dress-code-palette { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 24px; }
+.dress-code-palette > div { display: grid; justify-items: center; gap: 9px; }
+.dress-code-palette i { display: block; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #0002; box-shadow: 0 0 0 4px #ffffff8c; }
+
+.jasmine-card .guestbook h2 {
+  font-size: var(--guestbook-title-size, 18px) !important;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

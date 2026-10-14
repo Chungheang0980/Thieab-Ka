@@ -11,7 +11,7 @@ export async function getCurrentClient() {
     `select a.id, a.username
      from client_accounts a
      join weddings w on w.client_id = a.id
-     order by a.created_at
+     order by case when a.username = 'admin' then 0 else 1 end, a.created_at
      limit 1`
   );
   if (existing.rows[0]) return existing.rows[0];

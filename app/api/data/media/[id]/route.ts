@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { getCurrentClient } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { isLocalClient, removeLocalMedia } from "@/lib/local-store";
+import { rejectUnsafeMutation } from "@/lib/request-security";
 
-export async function DELETE(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
+  const unsafeResponse = rejectUnsafeMutation(request);
+  if (unsafeResponse) return unsafeResponse;
   const client = await getCurrentClient();
   if (!client) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

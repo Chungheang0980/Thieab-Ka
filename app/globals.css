@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&family=Moul&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Noto+Serif+Khmer:wght@400;500;600;700&family=Siemreap&display=swap');
-
 :root {
   --ink: #362718;
   --muted: #81715c;
@@ -5761,4 +5759,297 @@ input:focus, textarea:focus {
   line-height: 1.35;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Public invitation parity: the guest card and designer preview share one layout. */
+.font-serif { --khmer-display-font: "Noto Serif Khmer"; --khmer-body-font: "Noto Serif Khmer"; }
+.font-sans { --khmer-display-font: "Noto Sans Khmer"; --khmer-body-font: "Noto Sans Khmer"; }
+.font-battambang { --khmer-display-font: "Battambang"; --khmer-body-font: "Battambang"; }
+.font-kantumruy { --khmer-display-font: "Kantumruy Pro"; --khmer-body-font: "Kantumruy Pro"; }
+.font-siemreap { --khmer-display-font: "Siemreap"; --khmer-body-font: "Siemreap"; }
+.font-moul { --khmer-display-font: "Moul"; --khmer-body-font: "Noto Serif Khmer"; }
+
+.jasmine-card {
+  font-family: var(--khmer-body-font, "Noto Serif Khmer");
+}
+.jasmine-card button,
+.jasmine-card .invite-message,
+.jasmine-card .blessing,
+.jasmine-card .dress-code,
+.jasmine-card .venue-section,
+.jasmine-card .guestbook {
+  font-family: var(--khmer-body-font, "Noto Serif Khmer");
+}
+
+.public-page {
+  min-height: 100dvh;
+  padding: 20px 12px;
+  background: #eef2f7;
+}
+.public-invitation-shell {
+  width: min(430px, 100%);
+}
+.public-page.opened .public-invitation-shell {
+  animation: publicCardReveal .28s ease-out both;
+}
+.public-page .jasmine-card.reveal-on-scroll,
+.public-page .jasmine-card .reveal-on-scroll {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Refined opening cover using the same selected Khmer font system as the card. */
+.public-page .invite-open-screen {
+  padding: 16px;
+  background:
+    radial-gradient(circle at 18% 10%, #d7b97855 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 90%, #84906f40 0 2px, transparent 3px),
+    linear-gradient(145deg, #e9e2d6, #cfc7b9);
+  color: #294239;
+}
+.public-page .invite-open-screen::before {
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, transparent 0 47%, #ffffff24 48% 52%, transparent 53%) 0 0 / 72px 72px,
+    radial-gradient(circle at center, transparent 0 45%, #29423908 100%);
+  box-shadow: none;
+}
+.open-cover-panel {
+  position: relative;
+  z-index: 2;
+  width: min(430px, calc(100vw - 32px));
+  min-height: min(720px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: clamp(28px, 5dvh, 48px) 24px;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  place-items: center;
+  gap: clamp(18px, 3dvh, 28px);
+  overflow: hidden;
+  border: 1px solid #c9b98f;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% -8%, #f3e7c9 0, transparent 35%),
+    linear-gradient(#fffdf8ef, #fbf7eeef),
+    url("/wedding-floral-background.jpg") center / cover;
+  box-shadow: 0 28px 80px #26342c38, inset 0 0 0 8px #ffffff85;
+}
+.open-cover-panel::before,
+.open-cover-panel::after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  border: 1px solid #b9914b42;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.open-cover-panel::before { left: -118px; top: -92px; box-shadow: 0 0 0 18px #b9914b13, 0 0 0 36px #b9914b0b; }
+.open-cover-panel::after { right: -124px; bottom: -96px; box-shadow: 0 0 0 18px #75826813, 0 0 0 36px #7582680b; }
+.open-kicker {
+  position: relative;
+  z-index: 3;
+  color: #78643e;
+  font: 600 12px "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .2em;
+}
+.public-page .open-envelope {
+  position: relative;
+  align-self: end;
+  width: min(300px, 80vw);
+  height: 218px;
+  aspect-ratio: auto;
+  display: block;
+  perspective: none;
+  animation: envelopeEnter .38s ease-out both;
+  filter: drop-shadow(0 22px 24px #5b4b3426);
+}
+.public-page .open-envelope::before,
+.public-page .open-envelope::after {
+  content: "";
+  position: absolute;
+  inset: 64px 0 0;
+  border: 1px solid #bda46f;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.public-page .open-envelope::before {
+  z-index: 0;
+  clip-path: none;
+  background: #efe0bc;
+}
+.public-page .open-envelope::after {
+  z-index: 1;
+  height: 112px;
+  transform: none;
+  transform-origin: top;
+  clip-path: polygon(0 0, 100% 0, 50% 82%);
+  background: linear-gradient(160deg, #f8edcf, #dfc991);
+  animation: none;
+}
+.public-page .open-card {
+  position: absolute;
+  z-index: 1;
+  left: 9%;
+  top: 0;
+  width: 82%;
+  min-height: 170px;
+  padding: 22px 16px 30px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 9px;
+  border: 1px solid #cdbb92;
+  border-radius: 3px;
+  background: #fffdf7;
+  box-shadow: 0 10px 22px #62543b1c;
+  transform: translateY(-18px);
+  animation: cardFloatSoft 2.8s ease-in-out infinite alternate;
+  transition: transform .32s ease-out, opacity .24s ease-out;
+}
+.public-page .open-card small {
+  color: #89744c;
+  font: 600 10px "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .16em;
+}
+.public-page .open-card strong {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 3px 8px;
+  color: #294239;
+  font-family: var(--khmer-display-font, "Noto Serif Khmer");
+  font-size: clamp(18px, 5.4vw, 24px);
+  line-height: 1.45;
+}
+.public-page .open-card strong i {
+  color: #b58a3e;
+  font: italic 18px "Cormorant Garamond", Georgia, serif;
+}
+.public-page .open-card em {
+  color: #71806b;
+  font: 600 12px "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .07em;
+}
+.envelope-pocket {
+  position: absolute;
+  z-index: 2;
+  inset: 64px 0 0;
+  border: 1px solid #bda46f;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #f8ebc9, #dfc68c);
+  clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%);
+}
+.envelope-seal {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 126px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #d6ae5a, #946926);
+  color: #fff8e7;
+  font-family: var(--khmer-display-font, "Noto Serif Khmer");
+  font-size: 15px;
+  box-shadow: 0 7px 14px #72511d3d, inset 0 0 0 3px #fff2c84d;
+  transform: translateX(-50%);
+}
+.public-page .open-guest {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  color: #294239;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer");
+  line-height: 1.5;
+}
+.public-page .open-guest small { color: #74806f; font-size: 13px; }
+.public-page .open-guest strong {
+  max-width: 330px;
+  font-family: var(--khmer-display-font, "Noto Serif Khmer");
+  font-size: clamp(18px, 5vw, 24px);
+  overflow-wrap: anywhere;
+}
+.public-page .open-touch {
+  min-width: min(280px, 100%);
+  min-height: 58px;
+  padding: 10px 24px;
+  gap: 12px;
+  border: 1px solid #294239;
+  border-radius: 999px;
+  background: #294239;
+  color: #fffdf7;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer");
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  box-shadow: 0 14px 28px #2942392f;
+  animation: none;
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+.public-page .open-touch > span { display: grid; gap: 1px; }
+.public-page .open-touch small {
+  font: 600 9px "Cormorant Garamond", Georgia, serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .76;
+}
+.public-page .invite-open-screen:hover .open-touch,
+.public-page .invite-open-screen:focus-visible .open-touch { background: #36584e; }
+.public-page .invite-open-screen:active .open-touch { transform: scale(.98); }
+.public-page .invite-open-screen:focus-visible { outline: 3px solid #b9914b; outline-offset: -7px; }
+.phase-opening .invite-open-screen { animation: publicCoverLeave .38s ease-in both; }
+.phase-opening .open-cover-panel { transform: scale(.985); transition: transform .38s ease-in; }
+.phase-opening .open-envelope { animation: none; }
+.phase-opening .open-card { animation: none; transform: translateY(-70px); opacity: 0; }
+
+@keyframes cardFloatSoft {
+  from { transform: translateY(-16px); }
+  to { transform: translateY(-22px); }
+}
+@keyframes publicCoverLeave {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes publicCardReveal {
+  from { opacity: 0; transform: scale(.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 560px) {
+  .public-page { padding: 0; }
+  .public-page .invite-open-screen { padding: 0; }
+  .open-cover-panel {
+    width: 100vw;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .public-page .open-envelope { width: min(286px, 82vw); }
+}
+
+@media (max-height: 650px) {
+  .open-cover-panel { padding-block: 18px; gap: 12px; }
+  .public-page .open-envelope { height: 188px; transform: scale(.86); margin-block: -14px; }
+  .public-page .open-guest strong { font-size: 18px; }
+  .public-page .open-touch { min-height: 50px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .public-page *,
+  .public-page *::before,
+  .public-page *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }

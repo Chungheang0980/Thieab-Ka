@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getLocalInvitation, updateLocalRSVP } from "@/lib/local-store";
+import { rejectUnsafeMutation } from "@/lib/request-security";
 import { Guest, RSVPStatus, Wedding } from "@/types";
 
 type InvitationRow = {
@@ -31,6 +32,8 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const unsafeResponse = rejectUnsafeMutation(request);
+  if (unsafeResponse) return unsafeResponse;
   const { id } = await context.params;
   const { status } = await request.json() as { status: RSVPStatus };
   if (!["attending", "declined"].includes(status)) {

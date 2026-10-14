@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentClient } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { createLocalGuests, isLocalClient } from "@/lib/local-store";
+import { rejectUnsafeMutation } from "@/lib/request-security";
 import { Guest } from "@/types";
 
 type GuestInput = Pick<Guest, "name" | "phone" | "table">;
@@ -22,6 +23,8 @@ function normalizeGuestName(value: string) {
 }
 
 export async function POST(request: NextRequest) {
+  const unsafeResponse = rejectUnsafeMutation(request);
+  if (unsafeResponse) return unsafeResponse;
   const client = await getCurrentClient();
   if (!client) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await request.json() as { guests?: GuestInput[] };

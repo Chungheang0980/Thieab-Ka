@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentClient } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { getLocalStore, isLocalClient, updateLocalWedding } from "@/lib/local-store";
+import { rejectUnsafeMutation } from "@/lib/request-security";
 import { Guest, Wedding } from "@/types";
 
 type GuestRow = {
@@ -40,6 +41,8 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  const unsafeResponse = rejectUnsafeMutation(request);
+  if (unsafeResponse) return unsafeResponse;
   const client = await getCurrentClient();
   if (!client) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const wedding = await request.json() as Wedding;

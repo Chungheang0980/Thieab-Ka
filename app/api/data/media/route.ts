@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentClient } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { addLocalMedia, isLocalClient } from "@/lib/local-store";
+import { rejectUnsafeMutation } from "@/lib/request-security";
 
 const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
@@ -15,6 +16,8 @@ type InsertedMedia = {
 };
 
 export async function POST(request: NextRequest) {
+  const unsafeResponse = rejectUnsafeMutation(request);
+  if (unsafeResponse) return unsafeResponse;
   const client = await getCurrentClient();
   if (!client) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

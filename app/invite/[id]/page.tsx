@@ -2,8 +2,45 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { MailOpen } from "lucide-react";
 import { InvitationCard } from "@/components/InvitationCard";
-import { Guest, RSVPStatus, Wedding } from "@/types";
+import { Guest, KhmerFontId, RSVPStatus, Wedding } from "@/types";
+
+const fontFamilies: Record<KhmerFontId, string> = {
+  serif: "Noto Serif Khmer",
+  sans: "Noto Sans Khmer",
+  battambang: "Battambang",
+  kantumruy: "Kantumruy Pro",
+  siemreap: "Siemreap",
+  moul: "Moul"
+};
+
+function preloadImage(url: string) {
+  if (!url) return Promise.resolve();
+  return new Promise<void>((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
+    image.src = url;
+    if (image.complete) resolve();
+  });
+}
+
+async function prepareInvitation(wedding: Wedding) {
+  const family = fontFamilies[wedding.khmerFont || "serif"];
+  const nameArtworkUrl = wedding.nameArtworkUrl || "/sai-rachana-gold.png";
+  const assets = Promise.allSettled([
+    document.fonts.load(`400 16px "${family}"`, "ធៀបការ"),
+    document.fonts.load('600 16px "Cormorant Garamond"', "Wedding"),
+    preloadImage(nameArtworkUrl),
+    preloadImage(wedding.backgroundUrl || "")
+  ]);
+
+  await Promise.race([
+    assets,
+    new Promise<void>((resolve) => window.setTimeout(resolve, 2500))
+  ]);
+}
 
 export default function InvitePage() {
   const params = useParams<{ id: string }>();
@@ -13,14 +50,24 @@ export default function InvitePage() {
   const [openPhase, setOpenPhase] = useState<"closed" | "opening" | "opened">("closed");
 
   useEffect(() => {
-    fetch(`/api/invitations/${params.id}`).then(async (response) => {
-      if (response.ok) {
-        const data = await response.json();
+    let active = true;
+
+    async function loadInvitation() {
+      try {
+        const response = await fetch(`/api/invitations/${params.id}`);
+        if (!response.ok) return;
+        const data = await response.json() as { wedding: Wedding; guest: Guest };
+        await prepareInvitation(data.wedding);
+        if (!active) return;
         setWedding(data.wedding);
         setGuest(data.guest);
+      } finally {
+        if (active) setReady(true);
       }
-      setReady(true);
-    });
+    }
+
+    loadInvitation();
+    return () => { active = false; };
   }, [params.id]);
 
   function updateRSVP(status: RSVPStatus) {
@@ -34,27 +81,39 @@ export default function InvitePage() {
 
   function openInvitation() {
     setOpenPhase("opening");
-    window.setTimeout(() => setOpenPhase("opened"), 1050);
+    window.setTimeout(() => setOpenPhase("opened"), 380);
   }
 
   if (!ready) return <main className="center-screen">កំពុងរៀបចំធៀបការ...</main>;
   if (!guest || !wedding) return <main className="center-screen">រកមិនឃើញធៀបការ</main>;
   return (
-    <main className={`public-page ${openPhase === "opened" ? "opened" : "waiting-to-open"} phase-${openPhase}`}>
+    <main className={`public-page font-${wedding.khmerFont || "serif"} ${openPhase === "opened" ? "opened" : "waiting-to-open"} phase-${openPhase}`}>
       {openPhase !== "opened" && (
-        <button className="invite-open-screen" type="button" onClick={openInvitation} disabled={openPhase === "opening"}>
-          <img className="cover-flower cover-flower-left" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23b88a3e' stroke-width='3'%3E%3Cpath d='M18 118C55 99 72 74 80 24'/%3E%3Cpath d='M32 103c12-36 39-54 79-55'/%3E%3Cpath d='M48 87c29 3 51-6 68-31'/%3E%3C/g%3E%3Cellipse cx='42' cy='106' rx='9' ry='18' fill='%23e8c7aa' transform='rotate(-35 42 106)'/%3E%3Cellipse cx='78' cy='64' rx='8' ry='16' fill='%23f0dcc5' transform='rotate(38 78 64)'/%3E%3Cellipse cx='106' cy='50' rx='7' ry='14' fill='%23e8c7aa' transform='rotate(62 106 50)'/%3E%3C/svg%3E" alt="" />
-          <img className="cover-flower cover-flower-right" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23b88a3e' stroke-width='3'%3E%3Cpath d='M18 118C55 99 72 74 80 24'/%3E%3Cpath d='M32 103c12-36 39-54 79-55'/%3E%3Cpath d='M48 87c29 3 51-6 68-31'/%3E%3C/g%3E%3Cellipse cx='42' cy='106' rx='9' ry='18' fill='%23e8c7aa' transform='rotate(-35 42 106)'/%3E%3Cellipse cx='78' cy='64' rx='8' ry='16' fill='%23f0dcc5' transform='rotate(38 78 64)'/%3E%3Cellipse cx='106' cy='50' rx='7' ry='14' fill='%23e8c7aa' transform='rotate(62 106 50)'/%3E%3C/svg%3E" alt="" />
-          <span className="open-florals" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span className="cover-heart" aria-hidden="true">♥</span>
-          <span className="cover-names">{wedding.brideName}<b>❦</b>{wedding.groomName}</span>
-          <span className="cover-date">{new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric" }).format(new Date(`${wedding.date}T${wedding.time || "00:00"}`))}</span>
-          <span className="cover-kicker">Cordially Invites</span>
-          <span className="open-touch">Open</span>
+        <button
+          className="invite-open-screen"
+          type="button"
+          onClick={openInvitation}
+          disabled={openPhase === "opening"}
+          aria-label={`Open wedding invitation for ${guest.name}`}
+        >
+          <span className="open-cover-panel">
+            <span className="open-kicker">THIEAB KA · WEDDING INVITATION</span>
+            <span className="open-envelope" aria-hidden="true">
+              <span className="open-card">
+                <small>You are invited</small>
+                <strong>{wedding.brideName}<i>&amp;</i>{wedding.groomName}</strong>
+                <em>{new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric" }).format(new Date(`${wedding.date}T${wedding.time || "00:00"}`))}</em>
+              </span>
+              <span className="envelope-pocket" />
+              <span className="envelope-seal">{wedding.brideName.slice(0, 1)}{wedding.groomName.slice(0, 1)}</span>
+            </span>
+            <span className="open-guest"><small>សូមគោរពអញ្ជើញ</small><strong>{guest.name}</strong></span>
+            <span className="open-touch"><MailOpen size={21} aria-hidden="true" /><span>បើកធៀបការ<small>Open invitation</small></span></span>
+          </span>
         </button>
       )}
       <div className="public-invitation-shell" aria-hidden={openPhase !== "opened"}>
-        <InvitationCard wedding={wedding} guest={guest} onRSVP={updateRSVP} />
+        <InvitationCard wedding={wedding} guest={guest} onRSVP={updateRSVP} compact />
       </div>
     </main>
   );

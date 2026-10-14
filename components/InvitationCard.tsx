@@ -71,8 +71,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const [notice, setNotice] = useState("");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [albumIndex, setAlbumIndex] = useState(0);
-  const [albumStatus, setAlbumStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [albumPaused, setAlbumPaused] = useState(false);
+  const [albumLoadState, setAlbumLoadState] = useState<{ url: string; status: "ready" | "error" }>({ url: "", status: "ready" });
   const [wishFormOpen, setWishFormOpen] = useState(false);
   const [wishName, setWishName] = useState(guest?.name || "");
   const [wishMessage, setWishMessage] = useState("");
@@ -102,6 +101,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const hasDirectVideo = isDirectVideoUrl(wedding.videoUrl || "");
   const photoUrls = parsePhotoUrls(wedding.photoUrls || "").slice(0, 8);
   const activePhotoUrl = photoUrls[albumIndex] || "";
+  const albumStatus = albumLoadState.url === activePhotoUrl ? albumLoadState.status : "loading";
   const dressCodeColors = (wedding.dressCodeColors || []).slice(0, 4).filter((color) => /^#[0-9a-f]{6}$/i.test(color));
   const calendarStart = `${safeDate.replace(/-/g, "")}T${safeTime.replace(":", "")}00`;
   const calendarEndDate = new Date(date.getTime() + 4 * 60 * 60 * 1000);
@@ -164,16 +164,19 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   }, [photoUrls.length, wishes.length]);
 
   useEffect(() => {
-    setAlbumStatus("loading");
-  }, [activePhotoUrl]);
-
-  useEffect(() => {
-    if (photoUrls.length <= 1 || albumStatus !== "ready" || albumPaused) return;
+    if (photoUrls.length <= 1 || albumStatus !== "ready" || lightboxIndex !== null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setTimeout(() => {
       setAlbumIndex((current) => (current + 1) % photoUrls.length);
-    }, 6500);
+    }, 4500);
     return () => window.clearTimeout(timer);
-  }, [albumIndex, albumPaused, albumStatus, photoUrls.length]);
+  }, [albumIndex, albumStatus, lightboxIndex, photoUrls.length]);
+
+  useEffect(() => {
+    if (photoUrls.length <= 1) return;
+    const nextPhoto = new Image();
+    nextPhoto.src = photoUrls[(albumIndex + 1) % photoUrls.length];
+  }, [albumIndex, photoUrls.length, wedding.photoUrls]);
 
   useEffect(() => {
     if (albumIndex >= photoUrls.length && photoUrls.length > 0) setAlbumIndex(0);
@@ -323,13 +326,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
           <section className="prewedding-media reveal-on-scroll">
             <div className="media-heading"><span>អាល់ប៊ុមអាពាហ៍ពិពាហ៍</span></div>
             {photoUrls.length > 0 && (
-              <div
-                className="album-single"
-                onMouseEnter={() => setAlbumPaused(true)}
-                onMouseLeave={() => setAlbumPaused(false)}
-                onFocusCapture={() => setAlbumPaused(true)}
-                onBlurCapture={() => setAlbumPaused(false)}
-              >
+              <div className="album-single">
                 <button
                   className="album-single-photo"
                   type="button"
@@ -351,19 +348,17 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
                       transition={{ duration: .45 }}
                       onLoad={(event) => {
                         setPhotoShape(activePhotoUrl, event.currentTarget);
-                        if (event.currentTarget.currentSrc.endsWith(activePhotoUrl)) setAlbumStatus("ready");
+                        setAlbumLoadState({ url: activePhotoUrl, status: "ready" });
                       }}
-                      onError={(event) => {
-                        if (event.currentTarget.currentSrc.endsWith(activePhotoUrl)) setAlbumStatus("error");
-                      }}
+                      onError={() => setAlbumLoadState({ url: activePhotoUrl, status: "error" })}
                     />
                   </AnimatePresence>
                   {albumStatus === "error" && <span className="album-feedback error" role="alert">Photo unavailable</span>}
                 </button>
                 {photoUrls.length > 1 && albumStatus === "ready" && (
                   <>
-                    <button className="album-single-nav prev" type="button" onClick={() => setAlbumIndex((albumIndex - 1 + photoUrls.length) % photoUrls.length)} aria-label="Previous photo"><ChevronLeft size={22} /></button>
-                    <button className="album-single-nav next" type="button" onClick={() => setAlbumIndex((albumIndex + 1) % photoUrls.length)} aria-label="Next photo"><ChevronRight size={22} /></button>
+                    <button className="album-single-nav prev" type="button" onClick={() => shiftAlbum(-1)} aria-label="Previous photo"><ChevronLeft size={22} /></button>
+                    <button className="album-single-nav next" type="button" onClick={() => shiftAlbum(1)} aria-label="Next photo"><ChevronRight size={22} /></button>
                   </>
                 )}
                 {albumStatus === "ready" && <span className="album-counter">{albumIndex + 1} / {photoUrls.length}</span>}

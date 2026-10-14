@@ -71,6 +71,8 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const [notice, setNotice] = useState("");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [albumIndex, setAlbumIndex] = useState(0);
+  const [albumStatus, setAlbumStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [albumPaused, setAlbumPaused] = useState(false);
   const [wishFormOpen, setWishFormOpen] = useState(false);
   const [wishName, setWishName] = useState(guest?.name || "");
   const [wishMessage, setWishMessage] = useState("");
@@ -99,6 +101,7 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   const videoEmbedUrl = getVideoEmbedUrl(wedding.videoUrl || "");
   const hasDirectVideo = isDirectVideoUrl(wedding.videoUrl || "");
   const photoUrls = parsePhotoUrls(wedding.photoUrls || "").slice(0, 8);
+  const activePhotoUrl = photoUrls[albumIndex] || "";
   const dressCodeColors = (wedding.dressCodeColors || []).slice(0, 4).filter((color) => /^#[0-9a-f]{6}$/i.test(color));
   const calendarStart = `${safeDate.replace(/-/g, "")}T${safeTime.replace(":", "")}00`;
   const calendarEndDate = new Date(date.getTime() + 4 * 60 * 60 * 1000);
@@ -161,12 +164,31 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
   }, [photoUrls.length, wishes.length]);
 
   useEffect(() => {
-    if (photoUrls.length <= 1) return;
-    const timer = window.setInterval(() => {
+    setAlbumStatus("loading");
+  }, [activePhotoUrl]);
+
+  useEffect(() => {
+    if (photoUrls.length <= 1 || albumStatus !== "ready" || albumPaused) return;
+    const timer = window.setTimeout(() => {
       setAlbumIndex((current) => (current + 1) % photoUrls.length);
-    }, 4500);
-    return () => window.clearInterval(timer);
-  }, [photoUrls.length]);
+    }, 6500);
+    return () => window.clearTimeout(timer);
+  }, [albumIndex, albumPaused, albumStatus, photoUrls.length]);
+
+  useEffect(() => {
+    if (albumIndex >= photoUrls.length && photoUrls.length > 0) setAlbumIndex(0);
+  }, [albumIndex, photoUrls.length]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setLightboxIndex(null);
+      if (event.key === "ArrowLeft") shiftLightbox(-1);
+      if (event.key === "ArrowRight") shiftLightbox(1);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, photoUrls.length]);
 
   useEffect(() => {
     function tick() {
@@ -301,22 +323,50 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
           <section className="prewedding-media reveal-on-scroll">
             <div className="media-heading"><span>អាល់ប៊ុមអាពាហ៍ពិពាហ៍</span></div>
             {photoUrls.length > 0 && (
-              <div className="album-single">
-                <button className="album-single-photo" type="button" onClick={() => setLightboxIndex(albumIndex)}>
+              <div
+                className="album-single"
+                onMouseEnter={() => setAlbumPaused(true)}
+                onMouseLeave={() => setAlbumPaused(false)}
+                onFocusCapture={() => setAlbumPaused(true)}
+                onBlurCapture={() => setAlbumPaused(false)}
+              >
+                <button
+                  className="album-single-photo"
+                  type="button"
+                  disabled={albumStatus !== "ready"}
+                  onClick={() => setLightboxIndex(albumIndex)}
+                  aria-label={`Open photo ${albumIndex + 1} of ${photoUrls.length}`}
+                >
                   <AnimatePresence mode="wait">
                     <motion.img
-                      key={photoUrls[albumIndex]}
-                      src={photoUrls[albumIndex]}
+                      key={activePhotoUrl}
+                      src={activePhotoUrl}
                       alt={`Pre-wedding photo ${albumIndex + 1}`}
                       loading="lazy"
+                      width={2}
+                      height={3}
                       initial={{ opacity: 0, scale: .98 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 1.02 }}
                       transition={{ duration: .45 }}
-                      onLoad={(event) => setPhotoShape(photoUrls[albumIndex], event.currentTarget)}
+                      onLoad={(event) => {
+                        setPhotoShape(activePhotoUrl, event.currentTarget);
+                        if (event.currentTarget.currentSrc.endsWith(activePhotoUrl)) setAlbumStatus("ready");
+                      }}
+                      onError={(event) => {
+                        if (event.currentTarget.currentSrc.endsWith(activePhotoUrl)) setAlbumStatus("error");
+                      }}
                     />
                   </AnimatePresence>
+                  {albumStatus === "loading" && <span className="album-feedback" role="status">Loading photo…</span>}
+                  {albumStatus === "error" && <span className="album-feedback error" role="alert">Photo unavailable</span>}
                 </button>
+                {photoUrls.length > 1 && (
+                  <>
+                    <button className="album-single-nav prev" type="button" onClick={() => setAlbumIndex((albumIndex - 1 + photoUrls.length) % photoUrls.length)} aria-label="Previous photo"><ChevronLeft size={22} /></button>
+                    <button className="album-single-nav next" type="button" onClick={() => setAlbumIndex((albumIndex + 1) % photoUrls.length)} aria-label="Next photo"><ChevronRight size={22} /></button>
+                  </>
+                )}
                 <div className="album-dots" aria-label="Album photos">
                   {photoUrls.map((url, index) => (
                     <button className={index === albumIndex ? "active" : ""} type="button" key={`${url}-dot`} onClick={() => setAlbumIndex(index)} aria-label={`Show photo ${index + 1}`} />
@@ -432,15 +482,15 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
         </section>
       </section>
       {lightboxIndex !== null && (
-        <div className="lightbox" role="dialog" aria-modal="true">
-          <button className="lightbox-close" type="button" onClick={() => setLightboxIndex(null)}>×</button>
-          <button className="lightbox-arrow prev" type="button" onClick={() => shiftLightbox(-1)}>‹</button>
+        <div className="lightbox" role="dialog" aria-modal="true" aria-label="Wedding photo viewer">
+          <button className="lightbox-close" type="button" aria-label="Close photo viewer" onClick={() => setLightboxIndex(null)}>×</button>
+          <button className="lightbox-arrow prev" type="button" aria-label="Previous photo" onClick={() => shiftLightbox(-1)}>‹</button>
           <img src={photoUrls[lightboxIndex]} alt={`Pre-wedding photo ${lightboxIndex + 1}`} />
-          <button className="lightbox-arrow next" type="button" onClick={() => shiftLightbox(1)}>›</button>
+          <button className="lightbox-arrow next" type="button" aria-label="Next photo" onClick={() => shiftLightbox(1)}>›</button>
           <div className="lightbox-thumbs">
             {photoUrls.map((url, index) => (
-              <button className={index === lightboxIndex ? "active" : ""} type="button" onClick={() => setLightboxIndex(index)} key={`thumb-${url}-${index}`}>
-                <img src={url} alt={`Thumbnail ${index + 1}`} />
+              <button className={index === lightboxIndex ? "active" : ""} type="button" aria-label={`Show photo ${index + 1}`} onClick={() => setLightboxIndex(index)} key={`thumb-${url}-${index}`}>
+                <img src={url} alt="" loading="lazy" />
               </button>
             ))}
           </div>

@@ -28,13 +28,13 @@ export function WeddingProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (pathname.startsWith("/invite/") || pathname === "/admin/login") {
+    if (pathname.startsWith("/invite/")) {
       setReady(true);
       return;
     }
     fetch("/api/data").then(async (response) => {
-      if (response.status === 401) {
-        window.location.href = "/admin/login";
+      if (!response.ok) {
+        setReady(true);
         return;
       }
       const data = await response.json();

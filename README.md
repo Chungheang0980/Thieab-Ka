@@ -4,7 +4,7 @@ Thieab Ka is a bilingual Khmer/English digital wedding invitation application. O
 
 ## Features
 
-- Account signup and login with seven-day database-backed sessions
+- Direct access to one shared public wedding workspace without a login screen
 - Wedding editor with six invitation themes and optional animation
 - YouTube song links plus uploaded pre-wedding photo galleries and video displayed on invitations
 - Guest management with individual entry and Excel/CSV import
@@ -64,7 +64,7 @@ Thieab Ka is a bilingual Khmer/English digital wedding invitation application. O
    npm run dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000). The home page redirects to `/admin/login`; create an account from the signup tab on first use.
+6. Open [http://localhost:3000](http://localhost:3000). The home page opens the admin dashboard directly.
 
 ## Environment Variables
 
@@ -89,26 +89,23 @@ npm run lint     # Currently requires ESLint migration; see Project Review
 
 | Route | Access | Purpose |
 | --- | --- | --- |
-| `/` | Public | Redirects to admin login |
-| `/admin/login` | Public | Account login and signup |
-| `/admin` | Authenticated | Dashboard and RSVP summary |
-| `/admin/designer` | Authenticated | Wedding details and invitation theme editor |
-| `/admin/guests` | Authenticated | Guest entry, search, deletion, and Excel/CSV import |
-| `/admin/share` | Authenticated | Personal links and QR codes |
-| `/admin/draw` | Authenticated | Lucky draw for attending guests |
+| `/` | Public | Redirects to the admin dashboard |
+| `/admin/login` | Public | Legacy URL that redirects to the admin dashboard |
+| `/admin` | Public | Dashboard and RSVP summary |
+| `/admin/designer` | Public | Wedding details and invitation theme editor |
+| `/admin/guests` | Public | Guest entry, search, deletion, and Excel/CSV import |
+| `/admin/share` | Public | Personal links and QR codes |
+| `/admin/draw` | Public | Lucky draw for attending guests |
 | `/invite/[id]` | Public link | Guest invitation and RSVP |
 
 ## API Routes
 
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
 - `GET|PUT /api/data`
 - `POST /api/data/guests`
 - `DELETE /api/data/guests/[id]`
 - `GET|PATCH /api/invitations/[id]`
 
-Admin APIs resolve the account from the `thieab-ka-client` HTTP-only session cookie. Public invitation IDs act as access tokens for viewing and updating an RSVP, so invitation links should only be shared with their intended guests.
+Admin APIs use the shared public workspace without authentication. Anyone who has the site URL can view and modify wedding and guest data. Public invitation IDs act as access tokens for viewing and updating an RSVP, so invitation links should only be shared with their intended guests.
 
 ## Data Model
 

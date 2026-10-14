@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { CalendarDays, Gift, LayoutDashboard, LogOut, Menu, Send, Settings, Users, X } from "lucide-react";
+import { CalendarDays, Gift, LayoutDashboard, Menu, Send, Settings, Users, X } from "lucide-react";
 import { useState } from "react";
 import { useWedding } from "@/components/WeddingProvider";
 
@@ -22,15 +21,8 @@ export function AdminShell({ children, title, subtitle, action }: {
   action?: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { wedding, username } = useWedding();
   const [open, setOpen] = useState(false);
-
-  async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.replace("/admin/login");
-    router.refresh();
-  }
 
   return (
     <div className="admin-layout">
@@ -52,7 +44,6 @@ export function AdminShell({ children, title, subtitle, action }: {
         </nav>
         <div className="sidebar-bottom">
           <Link href="/admin/designer"><Settings size={17} /> ការកំណត់</Link>
-          <button className="sidebar-logout" onClick={logout}><LogOut size={17} /> ចាកចេញ</button>
           <div className="user-chip"><span>{username.slice(0, 2).toUpperCase()}</span><div><strong>{username}</strong><small>{wedding.brideName} & {wedding.groomName}</small></div></div>
         </div>
       </aside>

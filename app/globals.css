@@ -1806,6 +1806,101 @@ td code {
   }
 }
 
+/* Clean album controls and a larger final ABA gift section. */
+.jasmine-card .album-dots { display: none !important; }
+.jasmine-card .album-single-photo {
+  background: linear-gradient(110deg, #f1eadf 8%, #fbf7ef 18%, #f1eadf 33%) 0 0 / 220% 100%;
+}
+.jasmine-card .album-single-photo:disabled {
+  cursor: default;
+  animation: albumSurfaceLoading 1.6s ease-in-out infinite;
+}
+
+.jasmine-card .payment.payment-bottom,
+.jasmine-card.compact .payment.payment-bottom {
+  position: relative;
+  margin: 56px 0 0;
+  padding: 38px 24px 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  overflow: hidden;
+  border: 1px solid #d7c8ad;
+  background:
+    radial-gradient(circle at 50% 0, #f2e5c8 0, transparent 42%),
+    rgba(255, 253, 248, .94);
+  text-align: center;
+}
+.jasmine-card .payment.payment-bottom::before,
+.jasmine-card .payment.payment-bottom::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #b9955140;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.jasmine-card .payment.payment-bottom::before { left: -76px; top: -72px; box-shadow: 0 0 0 15px #b995510b; }
+.jasmine-card .payment.payment-bottom::after { right: -78px; bottom: -74px; box-shadow: 0 0 0 15px #71816c0b; }
+.jasmine-card .payment-bottom .payment-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.jasmine-card .payment-bottom .payment-copy svg { color: #b38336; margin-bottom: 2px; }
+.jasmine-card .payment-bottom .payment-copy span,
+.jasmine-card.compact .payment-bottom .payment-copy span {
+  color: #294239;
+  font-family: var(--khmer-display-font, "Noto Serif Khmer");
+  font-size: 20px;
+  line-height: 1.55;
+}
+.jasmine-card .payment-bottom .payment-copy small,
+.jasmine-card.compact .payment-bottom .payment-copy small {
+  color: #7b7468;
+  font-family: var(--khmer-body-font, "Noto Serif Khmer");
+  font-size: 12px;
+  line-height: 1.6;
+}
+.jasmine-card .payment-bottom .qr-frame,
+.jasmine-card.compact .payment-bottom .qr-frame {
+  position: relative;
+  z-index: 1;
+  width: min(190px, 68vw);
+  height: auto;
+  aspect-ratio: 1;
+  padding: 14px;
+  border: 1px solid #e1d7c6;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 18px 42px #55472f1c;
+}
+.jasmine-card .payment-bottom .qr-frame img,
+.jasmine-card .payment-bottom .qr-frame svg,
+.jasmine-card.compact .payment-bottom .qr-frame img,
+.jasmine-card.compact .payment-bottom .qr-frame svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes albumSurfaceLoading {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (max-width: 560px) {
+  .jasmine-card .payment.payment-bottom,
+  .jasmine-card.compact .payment.payment-bottom {
+    margin-top: 42px;
+    padding: 32px 20px 36px;
+  }
+}
+
 @media (max-width: 560px) {
   .admin-content {
     padding: 16px 12px 32px;

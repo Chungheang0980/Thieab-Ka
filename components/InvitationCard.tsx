@@ -358,21 +358,15 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
                       }}
                     />
                   </AnimatePresence>
-                  {albumStatus === "loading" && <span className="album-feedback" role="status">Loading photo…</span>}
                   {albumStatus === "error" && <span className="album-feedback error" role="alert">Photo unavailable</span>}
                 </button>
-                {photoUrls.length > 1 && (
+                {photoUrls.length > 1 && albumStatus === "ready" && (
                   <>
                     <button className="album-single-nav prev" type="button" onClick={() => setAlbumIndex((albumIndex - 1 + photoUrls.length) % photoUrls.length)} aria-label="Previous photo"><ChevronLeft size={22} /></button>
                     <button className="album-single-nav next" type="button" onClick={() => setAlbumIndex((albumIndex + 1) % photoUrls.length)} aria-label="Next photo"><ChevronRight size={22} /></button>
                   </>
                 )}
-                <div className="album-dots" aria-label="Album photos">
-                  {photoUrls.map((url, index) => (
-                    <button className={index === albumIndex ? "active" : ""} type="button" key={`${url}-dot`} onClick={() => setAlbumIndex(index)} aria-label={`Show photo ${index + 1}`} />
-                  ))}
-                </div>
-                <span className="album-counter">{albumIndex + 1} / {photoUrls.length}</span>
+                {albumStatus === "ready" && <span className="album-counter">{albumIndex + 1} / {photoUrls.length}</span>}
               </div>
             )}
             {(videoEmbedUrl || hasDirectVideo) && (
@@ -443,12 +437,6 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
             </div>
           </>
         )}
-        <div className="payment">
-          <div><span>ចំណងដៃតាម ABA</span><small>ស្កេនដើម្បីផ្ញើអំណោយ</small></div>
-          <div className="qr-frame">
-            {wedding.abaQrUrl ? <img src={wedding.abaQrUrl} alt="ABA payment QR code" /> : <QRCode value={wedding.abaUrl || "https://pay.ababank.com/demo"} size={76} />}
-          </div>
-        </div>
         {youtubeEmbedUrl && (
           <div className="youtube-music">
             <div><Music2 size={16} /><span>Wedding song</span></div>
@@ -478,6 +466,16 @@ export function InvitationCard({ wedding, guest, onRSVP, compact = false }: {
                 <span>{wish.message}</span>
               </div>
             ))}
+          </div>
+        </section>
+        <section className="payment payment-bottom reveal-on-scroll" aria-label="ABA wedding gift payment">
+          <div className="payment-copy">
+            <Gift size={20} aria-hidden="true" />
+            <span>ចំណងដៃតាម ABA</span>
+            <small>ស្កេន QR Code ដើម្បីផ្ញើអំណោយ</small>
+          </div>
+          <div className="qr-frame">
+            {wedding.abaQrUrl ? <img src={wedding.abaQrUrl} alt="ABA payment QR code" /> : <QRCode value={wedding.abaUrl || "https://pay.ababank.com/demo"} size={160} />}
           </div>
         </section>
       </section>

@@ -71,6 +71,7 @@ Thieab Ka is a bilingual Khmer/English digital wedding invitation application. O
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `POSTGRES_URL` | Yes | PostgreSQL connection string used by authentication, wedding, guest, and RSVP APIs |
+| `LIVE_POSTGRES_URL` | Vercel only | Active Vercel/Supabase PostgreSQL connection; preferred over `POSTGRES_URL` when present |
 | `NEXT_PUBLIC_BASE_URL` | Optional | Legacy deployment setting; invitation links now use the active application origin |
 
 Invitation QR codes use the active deployment origin. During local development, the share page detects the computer's LAN address so phones on the same Wi-Fi can open invitations.
@@ -133,7 +134,7 @@ npm run build
 npm run start
 ```
 
-For Vercel, connect the repository, set the root directory to `thieab-ka`, configure `POSTGRES_URL` and `NEXT_PUBLIC_BASE_URL`, and run `db/schema.sql` against the production database before creating the first account.
+For Vercel, connect the repository, set the root directory to `thieab-ka`, configure `LIVE_POSTGRES_URL` (or `POSTGRES_URL`) and `NEXT_PUBLIC_BASE_URL`, and run `db/schema.sql` against the production database before creating the first account.
 
 ## Project Review
 

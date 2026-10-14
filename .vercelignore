@@ -1,0 +1,9 @@
+.git
+.next
+.vercel
+.env*
+.local-postgres
+.local-store.json
+node_modules
+npm-debug.log*
+tsconfig.tsbuildinfo

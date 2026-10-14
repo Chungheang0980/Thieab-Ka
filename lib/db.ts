@@ -1,7 +1,13 @@
 import { Pool, QueryResultRow } from "pg";
 
 const globalForDb = globalThis as unknown as { thieabKaPool?: Pool };
-const connectionUrl = new URL(process.env.POSTGRES_URL!);
+const connectionString = process.env.LIVE_POSTGRES_URL ?? process.env.POSTGRES_URL;
+
+if (!connectionString) {
+  throw new Error("Set LIVE_POSTGRES_URL or POSTGRES_URL before starting Thieab Ka.");
+}
+
+const connectionUrl = new URL(connectionString);
 const sslMode = connectionUrl.searchParams.get("sslmode");
 const isLocalDatabase = ["localhost", "127.0.0.1", "::1"].includes(connectionUrl.hostname);
 connectionUrl.searchParams.delete("sslmode");
